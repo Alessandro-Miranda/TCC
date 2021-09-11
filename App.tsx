@@ -1,21 +1,38 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { FC } from 'react';
+// import { StyleSheet, Text, View, Button, ScrollView, Image, TextInput } from 'react-native';
+import Routes from './src/routes';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+const App: FC = () => <Routes />;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+// const styles = StyleSheet.create({
+//     container: {
+//         flex: 1,
+//         backgroundColor: '#fff',
+//         alignItems: 'center',
+//         justifyContent: 'center'
+//     },
+// });
+
+export default App;
+
+/**
+ * Exemplo de utilização da scrollView
+ * 
+ * <ScrollView>
+            <Text>Some Text</Text>
+            <View>
+                <Text>Other text</Text>
+                <Image source={{
+                    uri: 'https://reactnative.dev/docs/assets/p_cat2.png'
+                }}
+                style={{ width: 200, height: 200 }} />
+            </View>
+            <TextInput
+                style={{
+                    height: 40,
+                    borderColor: 'gray',
+                    borderWidth: 1
+                }}
+            />
+        </ScrollView>
+ */
