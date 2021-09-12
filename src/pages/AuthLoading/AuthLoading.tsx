@@ -1,10 +1,25 @@
-import React from 'react';
-import { Text } from 'react-native';
+import React, { useState } from 'react';
+import { View, StatusBar, Text, ActivityIndicator } from 'react-native';
+import { colors } from '../../styles';
+import { styles } from './styles';
 
 const AuthLoadingScreen: React.FC = () => {
+
+    const [ isLoading, setIsLoading ] = useState(true)
+
     return (
-        <Text>Tela de carregamento</Text>
-    )
+        <>
+            <StatusBar hidden={true} />
+            {
+                isLoading && (
+                    <View style={styles.container}>
+                        <ActivityIndicator size="large" color={colors.secundary} />
+                        <Text style={styles.loaderText}>Carregando...</Text>
+                    </View>
+                )
+            }
+        </>
+    );
 };
 
 export default AuthLoadingScreen;
