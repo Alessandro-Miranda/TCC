@@ -32,21 +32,45 @@ A aplicação criada possibilitará a troca de mensagens de forma instantânea u
 1º Clone o projeto
 > git clone https://github.com/Alessandro-Miranda/TCC.git
 
-2º Baixe as dependências.
-Via NPM:
-> npm install
+### Client
 
-Via Yarn:
-> Yarn install
+Acesse a pasta _client_ via terminal
 
-3º Inicie a aplicação em modo desenvolvimento
-> npm start ou yarn start
+> cd client
 
-4º Para gerar o build do projeto
-> npm run build ou yarn build
+e, utilizando o yarn, instale as dependências necessárias
+
+> yarn install
+
+Para iniciar o aplicativo pode-se utilizar as seguintes instruções:
+
+> npm start
+
+ou
+
+> yarn start
+
+### Server
+
+Acesse a pasta
+
+> cd server
+
+e, utilizando o yarn ou npm, instale as dependências necessárias
+
+>npm install
+
+ou
+
+>yarn install
+
+Para iniciar o servidor em modo desenvolvimento:
+
+>npm run dev
 
 ## Tecnologias e Ferramentas
-- [React](https://pt-br.reactjs.org/)
+- [React-Native](https://reactnative.dev/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [NodeJs](https://nodejs.org/)
-- [styled-components](https://styled-components.com/)
+- [Express](https://expressjs.com/pt-br/)
+- [Styled Components](https://styled-components.com/)
