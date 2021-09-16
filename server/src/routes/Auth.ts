@@ -44,18 +44,16 @@ authRouter.post('/', (req, res) => {
         // Checa se foi encontrado algum
         if(Object.values(user).some(value => value === ''))
         {
-            res.status(500).json({
+            return res.status(500).json({
                 message: 'Usuário não encontrado'
-            }).end();
-            return;
+            });
         }
         
         if(HASHED_PASSWORD !== userInformations.password)
         {
-            res.status(500).json({
+            return res.status(500).json({
                 message: 'Senha incorreta'
-            }).end();
-            return;
+            });
         }
 
         const JWT_SECRET = process.env.JWT_SECRET?.trimEnd() ?? '';
@@ -67,7 +65,7 @@ authRouter.post('/', (req, res) => {
             auth: true,
             TOKEN,
             isAdmin: userInformations.admin
-        }).end();
+        });
     }, { onlyOnce: true });
 });
 
