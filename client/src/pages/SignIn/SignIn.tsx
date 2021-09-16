@@ -21,7 +21,7 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
 
     const [ loginInformation, setLoginInformation ] = useState({ user: '', pwd: '' });
 
-    const handleChangeEmail = (event: NativeSyntheticEvent<TextInputChangeEventData>) =>
+    const handleChangeUserName = (event: NativeSyntheticEvent<TextInputChangeEventData>) =>
     {
         setLoginInformation({
             ...loginInformation,
@@ -66,11 +66,11 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <StatusBar hidden={true} />
-            <Text style={styles.labels}>E-mail</Text>
+            <Text style={styles.labels}>Celular</Text>
             <TextInput
-                placeholder="E-mail"
+                placeholder="Celular"
                 value={loginInformation.user}
-                onChange={handleChangeEmail}
+                onChange={handleChangeUserName}
                 autoCapitalize="none"
                 autoCorrect={false}
                 style={styles.inputs}
