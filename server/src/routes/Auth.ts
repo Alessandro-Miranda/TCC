@@ -7,7 +7,7 @@ import { sign } from 'jsonwebtoken';
 const authRouter = Router();
 
 type ReqBodyAuth = {
-    userId: string;
+    user: string;
     password: string;
 };
 
@@ -22,13 +22,13 @@ type UserInformations = {
 };
 
 authRouter.post('/', (req, res) => {
-    const userInformations: ReqBodyAuth = req.body;
-    const { userId, password } = userInformations;
+    const { user, password } = req.body as ReqBodyAuth;
     const HASHED_PASSWORD = createHash('sha256').update(password).digest('hex');
+    // obtém a referência do banco firebase
     const DB_REF = ref(getDatabase(firebaseApp), '/users');
     
     // Inicia o objeto com as propriedades vazias
-    const user: UserInformations = {
+    const userInformations: UserInformations = {
         id: '',
         department: '',
         email: '',
@@ -39,8 +39,9 @@ authRouter.post('/', (req, res) => {
     };
 
     onValue(DB_REF, (value) => {
-        value.forEach(elem => elem.key === userId && Object.assign(user, elem.val()));
+        value.forEach(elem => elem.key === user && Object.assign(user, elem.val()));
         
+        // Checa se foi encontrado algum
         if(Object.values(user).some(value => value === ''))
         {
             res.status(500).json({
@@ -49,7 +50,7 @@ authRouter.post('/', (req, res) => {
             return;
         }
         
-        if(HASHED_PASSWORD !== user.password)
+        if(HASHED_PASSWORD !== userInformations.password)
         {
             res.status(500).json({
                 message: 'Senha incorreta'
@@ -58,14 +59,14 @@ authRouter.post('/', (req, res) => {
         }
 
         const JWT_SECRET = process.env.JWT_SECRET?.trimEnd() ?? '';
-        const TOKEN = sign({ id: user.id }, JWT_SECRET, {
+        const TOKEN = sign({ id: userInformations.id }, JWT_SECRET, {
             expiresIn: 600
         });
         
         res.status(200).json({
             auth: true,
             TOKEN,
-            isAdmin: user.admin
+            isAdmin: userInformations.admin
         }).end();
     }, { onlyOnce: true });
 });
