@@ -39,7 +39,7 @@ authRouter.post('/', (req, res) => {
     };
 
     onValue(DB_REF, (value) => {
-        value.forEach(elem => elem.key === user && Object.assign(user, elem.val()));
+        value.forEach(elem => elem.key === user && Object.assign(userInformations, elem.val()));
         
         // Checa se foi encontrado algum
         if(Object.values(user).some(value => value === ''))
@@ -63,7 +63,7 @@ authRouter.post('/', (req, res) => {
         
         res.status(200).json({
             auth: true,
-            TOKEN,
+            token: TOKEN,
             isAdmin: userInformations.admin
         });
     }, { onlyOnce: true });
