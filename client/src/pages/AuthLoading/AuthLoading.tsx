@@ -18,7 +18,7 @@ const AuthLoadingScreen: React.FC<Props> = ({ navigation }) => {
 
     // Busca o token de autenticação do storage e redireciona para a página devida
     const bootstrapAsync = async () => {
-        const userToken = await AsyncStorage.getItem('userToken');
+        const userToken = await AsyncStorage.getItem('authToken');
         
         userToken ?? setIsLoading(false);
 
