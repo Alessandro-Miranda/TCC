@@ -17,6 +17,7 @@ const AppStack = createStackNavigator(
         }
     }
 );
+
 const AuthStack = createStackNavigator(
     {
         Login: SignIn
@@ -39,6 +40,6 @@ const Routes = createAppContainer(
             initialRouteName: 'AuthLoading'
         }
     )
-)
+);
 
 export default Routes;
