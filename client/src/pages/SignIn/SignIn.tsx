@@ -6,7 +6,8 @@ import {
     NativeSyntheticEvent,
     TextInputChangeEventData,
     View,
-    Alert
+    Alert,
+    ActivityIndicator
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RootStackParamList } from '../RootStackParamList';
@@ -14,12 +15,14 @@ import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { styles } from './styles';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { api } from '../../services/api';
+import { colors } from '../../styles';
 
 type Props = NavigationStackScreenProps<RootStackParamList, 'SignIn'>
 
 const SignIn: React.FC<Props> = ({ navigation }) => {
 
     const [ loginInformation, setLoginInformation ] = useState({ user: '', pwd: '' });
+    const [ isLoading, setIsLoading ] = useState(false);
 
     const handleChangeUserName = (event: NativeSyntheticEvent<TextInputChangeEventData>) =>
     {
@@ -37,6 +40,7 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
     }
 
     const onLogin = async () => {
+        setIsLoading(!isLoading);
         if(loginInformation.user === '' || loginInformation.pwd === '')
         {
             Alert.alert('Preencha todos os campos', 'Por favor, preencha o e-mail e a senha para continuar');
@@ -49,14 +53,18 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
                 user: loginInformation.user,
                 password: loginInformation.pwd
             });
-            const { auth, token, isAdmin } = data;
+            
             Alert.alert('dados vindos da api', JSON.stringify(data));
-            AsyncStorage.setItem('authToken', JSON.stringify(data));
+            await AsyncStorage.setItem('authToken', JSON.stringify(data));
+
+            navigation.navigate('App');
         }
         catch(err)
         {
             Alert.alert("erro", String(err));
         }
+
+        setIsLoading(!isLoading);
     }
 
     return (
@@ -83,7 +91,7 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
             />
             <TouchableHighlight style={styles.loginButton} onPress={onLogin}>
                 <Text style={styles.buttonText}>
-                    Entrar
+                    {isLoading ? <ActivityIndicator size="small" color={colors.primary} /> : 'Entrar'}
                 </Text>
             </TouchableHighlight>
         </View>
