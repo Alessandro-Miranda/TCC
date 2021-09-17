@@ -43,24 +43,20 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
             return;
         }
 
-        // Pega todo caracactere alfanumerico [A-Za-z0-9_] e não alfanumerico
-        // antes do @ e checa se possui o dominio
-        const pattern = /[\w\W]{5}@\D{2}.\D{2}/;
-        const regex = new RegExp(pattern, 'i');
-
-        if(!regex.test(loginInformation.user))
+        try
         {
-            Alert.alert('Padrão de e-mail incorreto. Por favor, preencha corretamente');
-            return;
+            const { data } = await api.post('/auth', {
+                user: loginInformation.user,
+                password: loginInformation.pwd
+            });
+            const { auth, token, isAdmin } = data;
+            Alert.alert('dados vindos da api', JSON.stringify(data));
+            AsyncStorage.setItem('authToken', JSON.stringify(data));
         }
-
-        const { data } = await api.post('/auth', {
-            user: loginInformation.user,
-            password: loginInformation.pwd
-        });
-
-        Alert.alert('dados vindos da api', data);
-        AsyncStorage.setItem('authToken', JSON.stringify(data));
+        catch(err)
+        {
+            Alert.alert("erro", String(err));
+        }
     }
 
     return (
@@ -74,6 +70,7 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
                 autoCapitalize="none"
                 autoCorrect={false}
                 style={styles.inputs}
+                keyboardType='phone-pad'
             />
             <Text style={[styles.labels, styles.emailLabel]}>Senha</Text>
             <TextInput
