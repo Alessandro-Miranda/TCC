@@ -16,19 +16,26 @@ import { styles } from './styles';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { api } from '../../services/api';
 import { colors } from '../../styles';
+import MaskInput, { Masks } from 'react-native-mask-input';
+
 
 type Props = NavigationStackScreenProps<RootStackParamList, 'SignIn'>
+type ApiResponse = {
+    auth: boolean;
+    token: string;
+    isAdmin: boolean;
+};
 
 const SignIn: React.FC<Props> = ({ navigation }) => {
 
     const [ loginInformation, setLoginInformation ] = useState({ user: '', pwd: '' });
     const [ isLoading, setIsLoading ] = useState(false);
 
-    const handleChangeUserName = (event: NativeSyntheticEvent<TextInputChangeEventData>) =>
+    const handleChangeUserName = (phoneNumber: string) =>
     {
         setLoginInformation({
             ...loginInformation,
-            user: event.nativeEvent.text
+            user: phoneNumber
         });
     }
     const handleChangePwd = (event: NativeSyntheticEvent<TextInputChangeEventData>) =>
@@ -43,38 +50,49 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
         setIsLoading(!isLoading);
         if(loginInformation.user === '' || loginInformation.pwd === '')
         {
+            setIsLoading(!isLoading);
             Alert.alert('Preencha todos os campos', 'Por favor, preencha o e-mail e a senha para continuar');
             return;
         }
 
         try
         {
-            const { data } = await api.post('/auth', {
-                user: loginInformation.user,
+            const unmaskedPhone = loginInformation.user.replace(/\D/g,'')
+            Alert.alert(unmaskedPhone);
+            const { data } = await api.post<ApiResponse>('/auth', {
+                user: unmaskedPhone,
                 password: loginInformation.pwd
             });
             
-            Alert.alert('dados vindos da api', JSON.stringify(data));
             await AsyncStorage.setItem('authToken', JSON.stringify(data));
 
-            navigation.navigate('App');
+            if(data.isAdmin)
+            {
+                setIsLoading(false);
+                navigation.navigate('Admin');
+            }
+            else
+            {
+                setIsLoading(false);
+                navigation.navigate('App');
+            }
         }
         catch(err)
         {
-            Alert.alert("erro", String(err));
+            setIsLoading(false);
+            Alert.alert("error", String(err));
         }
-
-        setIsLoading(!isLoading);
     }
 
     return (
         <View style={styles.container}>
             <StatusBar hidden={true} />
             <Text style={styles.labels}>Celular</Text>
-            <TextInput
-                placeholder="Celular"
+            <MaskInput
+                mask={Masks.BRL_PHONE}
+                placeholder="(99) 99999-9999"
                 value={loginInformation.user}
-                onChange={handleChangeUserName}
+                onChangeText={(masked) => handleChangeUserName(masked)}
                 autoCapitalize="none"
                 autoCorrect={false}
                 style={styles.inputs}
@@ -82,7 +100,7 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
             />
             <Text style={[styles.labels, styles.emailLabel]}>Senha</Text>
             <TextInput
-                placeholder="E-mail"
+                placeholder="Senha"
                 value={loginInformation.pwd}
                 onChange={handleChangePwd}
                 autoCapitalize="none"
