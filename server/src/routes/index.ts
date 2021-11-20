@@ -1,4 +1,4 @@
-import { authRouter } from "./auth";
+import { authRouter } from "./Auth";
 import { messagesRouter } from './messages';
 
 export {
