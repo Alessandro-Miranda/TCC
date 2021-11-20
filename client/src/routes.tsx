@@ -5,6 +5,7 @@ import SignIn from './pages/SignIn/SignIn';
 import Home from './pages/Home/Home';
 import Profile from './pages/Profile/Profile';
 import AuthLoadingScreen from './pages/AuthLoading/AuthLoading';
+import AdminHome from './pages/AdminHome/AdminHome';
 
 const AppStack = createStackNavigator(
     { 
@@ -15,6 +16,13 @@ const AppStack = createStackNavigator(
         defaultNavigationOptions: {
             headerTitleAlign: 'center'
         }
+    }
+);
+
+const AdminStack = createStackNavigator(
+    {
+        AdminHome: AdminHome,
+        AdminPerfil: Profile
     }
 );
 
@@ -34,6 +42,7 @@ const Routes = createAppContainer(
         {
             AuthLoading: AuthLoadingScreen,
             App: AppStack,
+            Admin: AdminStack,
             Auth: AuthStack
         },
         {
