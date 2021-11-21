@@ -57,8 +57,7 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
 
         try
         {
-            const unmaskedPhone = loginInformation.user.replace(/\D/g,'')
-            Alert.alert(unmaskedPhone);
+            const unmaskedPhone = loginInformation.user.replace(/\D/g,'');
             const { data } = await api.post<ApiResponse>('/auth', {
                 user: unmaskedPhone,
                 password: loginInformation.pwd
