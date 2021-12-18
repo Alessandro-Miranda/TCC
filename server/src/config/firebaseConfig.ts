@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
-import firebase, { initializeApp } from 'firebase/app';
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
 
 dotenv.config();
 
@@ -11,7 +12,7 @@ const MESSAGIN_SENDER_ID = process.env.MESSAGIN_SENDER_ID?.trimEnd();
 const APP_ID = process.env.APP_ID?.trimEnd();
 const DATABASE_URL = process.env.DATABASE_URL?.trimEnd();
 
-const firebaseConfig = {
+const firestore = initializeApp({
     apiKey: API_KEY,
     authDomain: AUTH_DOMAIN,
     projectId: PROJECT_ID,
@@ -19,6 +20,6 @@ const firebaseConfig = {
     databaseURL: DATABASE_URL,
     messagingSenderId: MESSAGIN_SENDER_ID,
     appId: APP_ID
-}
+})
 
-export const firebaseApp = initializeApp(firebaseConfig);
+export const firestoreApp = getFirestore(firestore);
