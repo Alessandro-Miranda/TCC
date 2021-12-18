@@ -1,5 +1,6 @@
 export type RootStackParamList = {
     Home: undefined;
     Profile: { userId: string };
-    Feed: { sort: 'latest' | 'top' } | undefined;
+    Chats: { chatId: string };
+    Messages: { sort: 'latest' | 'top' } | undefined;
 };
