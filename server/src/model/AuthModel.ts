@@ -50,7 +50,7 @@ export class AuthModel
     {
         const jwtSecret = process.env.JWT_SECRET?.trimEnd() as string;
         const token = sign({ id: user.email }, jwtSecret, {
-            expiresIn: 3600
+            expiresIn: 1800
         });
 
         return token;
