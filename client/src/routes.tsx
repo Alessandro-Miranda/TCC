@@ -1,21 +1,21 @@
 import React from 'react';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
-
-import SignIn from './pages/SignIn';
+import HomeHeader from './components/HomeHeader';
+import AdminHome from './pages/AdminHome';
+import AuthLoadingScreen from './pages/AuthLoading';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
-import AuthLoadingScreen from './pages/AuthLoading';
-import AdminHome from './pages/AdminHome';
+import SignIn from './pages/SignIn';
 import { colors } from './styles';
-import HomeHeader from './components/HomeHeader';
+
 
 const AppStack = createStackNavigator(
     {
         Mensagens: {
             screen: Home,
-            navigationOptions: () => ({
-                headerTitle: () => <HomeHeader />
+            navigationOptions: ({ navigation }) => ({
+                headerTitle: () => <HomeHeader navigation={navigation} />
             })
         },
         Perfil: {
