@@ -108,6 +108,8 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
                 autoCapitalize="none"
                 autoCorrect={false}
                 style={styles.inputs}
+                textContentType='password'
+                secureTextEntry={true}
             />
             { errorMessage !== '' && <Text style={styles.errorMessage}>{errorMessage}</Text> }
             <TouchableHighlight style={styles.loginButton} onPress={onLogin}>
