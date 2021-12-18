@@ -1,22 +1,34 @@
-import React from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect } from 'react';
 import {
-    FlatList,
-    Image,
-    Text,
+    FlatList, Text,
     View
 } from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 import ProfileImage from '../../components/ProfileImage';
+import { validateLogin } from '../../utils/validateLogin';
+import { RootStackParamList } from '../RootStackParamList';
 import { styles } from './styles';
 
-const Home: React.FC = () => {
+type Props = NavigationStackScreenProps<RootStackParamList, 'Auth'>
+const Home: React.FC<Props> = ({ navigation }) => {
+
+    useEffect(() => {
+        bootstrapAsync();
+    }, []);
+
+    const bootstrapAsync = async () => {
+        const token = await AsyncStorage.getItem('authToken');
+        await validateLogin(token, navigation);
+    }
 
     const onMessageSelect = () => {
 
     }
 
     return (
-        <View>
+        <View style={styles.container}>
             <FlatList
                 data={[
                     { contactName: 'João', message: 'Alguma mensagem que você verá a introdução dela' },
@@ -48,7 +60,11 @@ const Home: React.FC = () => {
                     </TouchableHighlight>
                 )}
                 keyExtractor={(_, index) => index.toString()}
-            />    
+                style={styles.flatList}
+            />
+            <View>
+                <Text style={styles.showContactsIcon}>Icon</Text>
+            </View>    
         </View>
     );
 }
