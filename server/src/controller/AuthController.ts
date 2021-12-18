@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { INVALID_PASSWORD, USER_NOT_FOUND } from "../constants/constants";
 import { AuthModel } from "../model/AuthModel";
+import { verifyJWT } from "../utils/verifyJWT";
 
 type ReqBodyAuth = {
     user: string;
@@ -9,7 +10,7 @@ type ReqBodyAuth = {
 
 export class AuthController
 {
-    async post(req: Request, res: Response)
+    async authenticate(req: Request, res: Response)
     {
         const { user, password } = req.body as ReqBodyAuth;
         
@@ -27,5 +28,32 @@ export class AuthController
         }
         
         res.status(200).send(response);
+    }
+
+    async confirmAuthentication(req: Request, res: Response)
+    {
+        const token = req.headers['x-access-token'];
+
+        if(!token)
+        {
+            res
+                .status(401)
+                .setHeader('WWW-Authenticate', 'Unauthorized')
+                .send({ auth: false });
+        }
+
+        if(verifyJWT(token as string))
+        {
+            res
+                .status(200)
+                .send({ auth: true });
+        }
+        else
+        {
+            res
+                .status(401)
+                .setHeader('WWW-Authenticate', 'Unauthorized')
+                .send({ auth: false });
+        }
     }
 }
