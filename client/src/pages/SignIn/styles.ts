@@ -46,5 +46,11 @@ export const styles = StyleSheet.create({
     },
     emailLabel: {
         marginTop: 20
+    },
+    errorMessage: {
+        marginTop: 20,
+        marginLeft: 15,
+        fontSize: 16,
+        color: 'red'
     }
 })
