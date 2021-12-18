@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, StatusBar, Text, View } from 'react-native';
 import { NavigationStackScreenProps } from 'react-navigation-stack';
+import { api } from '../../services/api';
 import { colors } from '../../styles';
 import { RootStackParamList } from '../RootStackParamList';
 import { styles } from './styles';
@@ -16,13 +17,20 @@ const AuthLoadingScreen: React.FC<Props> = ({ navigation }) => {
         bootstrapAsync();
     }, []);
 
-    // Busca o token de autenticação do storage e redireciona para a página devida
     const bootstrapAsync = async () => {
         const userToken = await AsyncStorage.getItem('authToken');
         
-        userToken ?? setIsLoading(false);
+        if(!userToken) navigation.navigate('Auth');
 
-        navigation.navigate(userToken ? 'App' : 'Auth');
+        const { data } = await api.get<{ auth: boolean }>('/auth/confirm-authentication', {
+            headers: {
+                "x-access-token": userToken
+            }
+        })
+        
+        data ?? setIsLoading(false);
+
+        navigation.navigate(data.auth ? 'App' : 'Auth');
     };
 
     return (
