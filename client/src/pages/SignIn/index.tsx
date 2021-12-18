@@ -1,43 +1,46 @@
-import React, { useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import {
-    Text,
-    TextInput,
-    NativeSyntheticEvent,
-    TextInputChangeEventData,
-    View,
-    Alert,
-    ActivityIndicator
-} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { RootStackParamList } from '../RootStackParamList';
-import { NavigationStackScreenProps } from 'react-navigation-stack';
-import { styles } from './styles';
+import { StatusBar } from 'expo-status-bar';
+import React, { useState } from 'react';
+import {
+    ActivityIndicator, Alert, NativeSyntheticEvent, Text,
+    TextInput, TextInputChangeEventData,
+    View
+} from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { api } from '../../services/api';
 import { colors } from '../../styles';
-import MaskInput, { Masks } from 'react-native-mask-input';
-
+import { RootStackParamList } from '../RootStackParamList';
+import { styles } from './styles';
 
 type Props = NavigationStackScreenProps<RootStackParamList, 'SignIn'>
+
 type ApiResponse = {
-    auth: boolean;
     token: string;
-    isAdmin: boolean;
+    user: {
+        first_name: string;
+        last_name: string;
+        password: string;
+        email: string;
+        department: string;
+        admin: boolean;
+    }
 };
 
 const SignIn: React.FC<Props> = ({ navigation }) => {
 
     const [ loginInformation, setLoginInformation ] = useState({ user: '', pwd: '' });
     const [ isLoading, setIsLoading ] = useState(false);
+    const [ errorMessage, setErrorMessage ] = useState('');
 
-    const handleChangeUserName = (phoneNumber: string) =>
+    const handleChangeUserName = (event: NativeSyntheticEvent<TextInputChangeEventData>) =>
     {
         setLoginInformation({
             ...loginInformation,
-            user: phoneNumber
+            user: event.nativeEvent.text
         });
     }
+
     const handleChangePwd = (event: NativeSyntheticEvent<TextInputChangeEventData>) =>
     {
         setLoginInformation({
@@ -57,15 +60,15 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
 
         try
         {
-            const unmaskedPhone = loginInformation.user.replace(/\D/g,'');
             const { data } = await api.post<ApiResponse>('/auth', {
-                user: unmaskedPhone,
+                user: loginInformation.user,
                 password: loginInformation.pwd
             });
             
-            await AsyncStorage.setItem('authToken', JSON.stringify(data));
+            await AsyncStorage.setItem('user', JSON.stringify(data.user));
+            await AsyncStorage.setItem('authToken', JSON.stringify(data.token));
 
-            if(data.isAdmin)
+            if(data.user.admin)
             {
                 setIsLoading(false);
                 navigation.navigate('Admin');
@@ -76,10 +79,11 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
                 navigation.navigate('App');
             }
         }
-        catch(err)
+        catch(err: any)
         {
+            const message = err.response.data.message as string;
             setIsLoading(false);
-            Alert.alert("error", String(err));
+            setErrorMessage(message);
         }
     }
 
@@ -87,15 +91,14 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
         <View style={styles.container}>
             <StatusBar hidden={true} />
             <Text style={styles.labels}>Celular</Text>
-            <MaskInput
-                mask={Masks.BRL_PHONE}
-                placeholder="(99) 99999-9999"
+            <TextInput
+                placeholder="exemplo@gmail.com"
                 value={loginInformation.user}
-                onChangeText={(masked) => handleChangeUserName(masked)}
+                onChange={handleChangeUserName}
                 autoCapitalize="none"
                 autoCorrect={false}
                 style={styles.inputs}
-                keyboardType='phone-pad'
+                keyboardType='email-address'
             />
             <Text style={[styles.labels, styles.emailLabel]}>Senha</Text>
             <TextInput
@@ -106,6 +109,7 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
                 autoCorrect={false}
                 style={styles.inputs}
             />
+            { errorMessage !== '' && <Text style={styles.errorMessage}>{errorMessage}</Text> }
             <TouchableHighlight style={styles.loginButton} onPress={onLogin}>
                 <Text style={styles.buttonText}>
                     {isLoading ? <ActivityIndicator size="small" color={colors.primary} /> : 'Entrar'}
