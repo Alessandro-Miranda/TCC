@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { View, StatusBar, Text, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-import { colors } from '../../styles';
-import { styles } from './styles';
-import { RootStackParamList } from '../RootStackParamList';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, StatusBar, Text, View } from 'react-native';
 import { NavigationStackScreenProps } from 'react-navigation-stack';
+import { colors } from '../../styles';
+import { RootStackParamList } from '../RootStackParamList';
+import { styles } from './styles';
+
 
 type Props = NavigationStackScreenProps<RootStackParamList, 'Auth'>
 
