@@ -2,6 +2,12 @@ import { StyleSheet } from 'react-native';
 import { colors } from '../../styles';
 
 export const styles = StyleSheet.create({
+    container: {
+        position: 'relative'
+    },
+    flatList: {
+        minHeight: '100%'
+    },
     messageContainer: {
         paddingBottom: 20,
         paddingTop: 20,
@@ -29,5 +35,10 @@ export const styles = StyleSheet.create({
     messagePreview: {
         fontSize: 16,
         color: colors.fontColor
+    },
+    showContactsIcon: {
+        position: 'absolute',
+        bottom: 50,
+        right: 50
     }
 })
