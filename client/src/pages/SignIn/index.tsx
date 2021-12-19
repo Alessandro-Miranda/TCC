@@ -94,7 +94,7 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <StatusBar hidden={true} />
-            <Text style={styles.labels}>Celular</Text>
+            <Text style={styles.labels}>E-mail</Text>
             <TextInput
                 placeholder="exemplo@gmail.com"
                 value={loginInformation.user}
