@@ -2,8 +2,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import {
-    ActivityIndicator, Alert, NativeSyntheticEvent, Text,
-    TextInput, TextInputChangeEventData,
+    ActivityIndicator,
+    Alert,
+    NativeSyntheticEvent,
+    Text,
+    TextInput,
+    TextInputChangeEventData,
     View
 } from 'react-native';
 import { TouchableHighlight } from 'react-native-gesture-handler';
