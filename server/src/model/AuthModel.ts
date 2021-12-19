@@ -13,11 +13,11 @@ import { passwordValidate } from '../utils/passwordValidate';
 export class AuthModel
 {
     private usersRef;
+    private database;
     
-    constructor(
-        private database = new Database()
-    )
+    constructor()
     {
+        this.database = new Database();
         this.usersRef = this.getUsersRef();
     }
 
