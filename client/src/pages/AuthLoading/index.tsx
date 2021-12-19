@@ -1,9 +1,9 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, StatusBar, Text, View } from 'react-native';
 import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { colors } from '../../styles';
 import { RootStackParamList } from '../../types/RootStackParamList';
+import { getInformationsFromStorage } from '../../utils/getInformationsFromStorage';
 import { validateLogin } from '../../utils/validateLogin';
 import { styles } from './styles';
 
@@ -17,7 +17,7 @@ const AuthLoadingScreen: React.FC<Props> = ({ navigation }) => {
     }, []);
 
     const bootstrapAsync = async () => {
-        const userToken = await AsyncStorage.getItem('authToken');
+        const userToken = await getInformationsFromStorage('authToken');
         setIsLoading(false);
         await validateLogin(userToken, navigation, 'App');
     };
