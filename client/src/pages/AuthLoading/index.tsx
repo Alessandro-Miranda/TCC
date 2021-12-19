@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, StatusBar, Text, View } from 'react-native';
 import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { colors } from '../../styles';
+import { RootStackParamList } from '../../types/RootStackParamList';
 import { validateLogin } from '../../utils/validateLogin';
-import { RootStackParamList } from '../RootStackParamList';
 import { styles } from './styles';
 
 type Props = NavigationStackScreenProps<RootStackParamList, 'Auth'>
