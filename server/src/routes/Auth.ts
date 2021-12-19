@@ -3,8 +3,10 @@ import { AuthController } from '../controller/AuthController';
 
 const authRouter = Router();
 
-authRouter.post('/', (new AuthController()).authenticate);
-authRouter.get('/confirm-authentication', (new AuthController()).confirmAuthentication)
+const authController = new AuthController();
+
+authRouter.post('/', authController.authenticate.bind(authController));
+authRouter.get('/confirm-authentication', authController.confirmAuthentication.bind(authController));
 
 export { authRouter };
 
