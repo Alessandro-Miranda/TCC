@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
         width: '100%'
     },
     loginButton: {
-        width: 300,
+        width: '100%',
         marginTop: 70,
         borderRadius: 50,
         backgroundColor: colors.secundary,
