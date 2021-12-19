@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { INVALID_PASSWORD, USER_NOT_FOUND } from "../constants/constants";
 import { AuthModel } from "../model/AuthModel";
-import { verifyJWT } from "../utils/verifyJWT";
 
 type ReqBodyAuth = {
     user: string;
@@ -10,12 +9,13 @@ type ReqBodyAuth = {
 
 export class AuthController
 {
+    constructor(private model = new AuthModel()){}
+
     async authenticate(req: Request, res: Response)
     {
         const { user, password } = req.body as ReqBodyAuth;
         
-        const model = new AuthModel();
-        const response = await model.checkUser(user, password);
+        const response = await this.model.checkUser(user, password);
 
         if(response ===  USER_NOT_FOUND || response === INVALID_PASSWORD)
         {
@@ -42,7 +42,7 @@ export class AuthController
                 .send({ auth: false });
         }
 
-        if(verifyJWT(token as string))
+        if(this.model.verifyJWT(token as string))
         {
             res
                 .status(200)
