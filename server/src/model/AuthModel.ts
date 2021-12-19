@@ -1,6 +1,4 @@
-import { collection } from 'firebase/firestore';
 import { sign, verify } from 'jsonwebtoken';
-import { firestoreApp } from '../config/firebaseConfig';
 import {
     INVALID_PASSWORD,
     USERS_COLLECTION_NAME,
@@ -12,23 +10,16 @@ import { passwordValidate } from '../utils/passwordValidate';
 
 export class AuthModel
 {
-    private usersRef;
     private database;
     
     constructor()
     {
-        this.database = new Database();
-        this.usersRef = this.getUsersRef();
-    }
-
-    getUsersRef()
-    {
-        return collection(firestoreApp, USERS_COLLECTION_NAME);
+        this.database = new Database(USERS_COLLECTION_NAME);
     }
 
     async checkUser(email: string, password: string)
     {
-        const [ userFound ] = await this.database.findUserByEmail(this.usersRef, email);
+        const [ userFound ] = await this.database.findUserByEmail(email);
 
         if(!userFound)
         {
