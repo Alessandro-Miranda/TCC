@@ -1,9 +1,11 @@
 import React from 'react';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import ContactsHeader from './components/ContactsHeader';
 import HomeHeader from './components/HomeHeader';
 import AdminHome from './pages/AdminHome';
 import AuthLoadingScreen from './pages/AuthLoading';
+import Contacts from './pages/Contacts';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import SignIn from './pages/SignIn';
@@ -21,6 +23,12 @@ const AppStack = createStackNavigator(
         Perfil: {
             screen: Profile
         },
+        Contatos: {
+            screen: Contacts,
+            navigationOptions: () => ({
+                headerTitle: () => <ContactsHeader />
+            }) 
+        }
     },
     {
         defaultNavigationOptions: {
