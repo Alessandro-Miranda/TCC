@@ -10,7 +10,7 @@ import { TouchableHighlight } from 'react-native-gesture-handler';
 import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { api } from '../../services/api';
 import { colors } from '../../styles';
-import { RootStackParamList } from '../RootStackParamList';
+import { RootStackParamList } from '../../types/RootStackParamList';
 import { styles } from './styles';
 
 type Props = NavigationStackScreenProps<RootStackParamList, 'SignIn'>
