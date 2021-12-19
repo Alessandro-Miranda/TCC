@@ -1,7 +1,11 @@
 import { collection } from 'firebase/firestore';
-import { sign } from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
 import { firestoreApp } from '../config/firebaseConfig';
-import { INVALID_PASSWORD, USERS_COLLECTION_NAME, USER_NOT_FOUND } from '../constants/constants';
+import {
+    INVALID_PASSWORD,
+    USERS_COLLECTION_NAME,
+    USER_NOT_FOUND
+} from '../constants/constants';
 import { Database } from '../repositories/Database';
 import { User } from '../types/User';
 import { passwordValidate } from '../utils/passwordValidate';
@@ -54,5 +58,20 @@ export class AuthModel
         });
 
         return token;
+    }
+
+    verifyJWT(token: string)
+    {
+        const secretKey = process.env.JWT_SECRET?.trimEnd() as string;
+        let isUserAuthenticated = false;
+
+        verify(token, secretKey, (err) => {
+            if(!err)
+            {
+                isUserAuthenticated = true;
+            }
+        });
+
+        return isUserAuthenticated;
     }
 }
