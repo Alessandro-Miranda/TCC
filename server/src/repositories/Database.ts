@@ -1,12 +1,30 @@
-import { CollectionReference, DocumentData, getDocs, query, where } from "firebase/firestore";
+import {
+    collection, CollectionReference, DocumentData, getDocs,
+    query,
+    where
+} from "firebase/firestore";
+import { firestoreApp } from "../config/firebaseConfig";
 import { IDatabaseRepositorie } from "../interfaces/IDatabaseRepository";
+import { Contacts } from "../types/Contacts";
 import { User } from "../types/User";
 
 export class Database implements IDatabaseRepositorie
 {
-    async findUserByEmail(userRef: CollectionReference<DocumentData>, email: string)
+    private collectionRef;
+
+    constructor(collectionName: string)
     {
-        const queryToExecute = query(userRef, where('email', '==', email));
+        this.collectionRef = this.getRef(collectionName);
+    }
+
+    getRef(collectionName: string): CollectionReference<DocumentData>
+    {
+        return collection(firestoreApp, collectionName);    
+    }
+
+    async findUserByEmail(email: string): Promise<User[]>
+    {
+        const queryToExecute = query(this.collectionRef, where('email', '==', email));
         
         const querySnapshot = await getDocs(queryToExecute);
         const userFound: User[] = [];
@@ -16,5 +34,14 @@ export class Database implements IDatabaseRepositorie
         });
 
         return userFound;    
+    }
+
+    async findAllContacts(email: string): Promise<Contacts[]>
+    {
+        // Obtém a subcoleção de contatos o formato final representa o path /usuarios/{email}/contatos
+        const contactsCollection = collection(firestoreApp, 'usuarios', email, 'contatos');
+        const contactsDoc = await getDocs(query(contactsCollection));
+        
+        return contactsDoc.docs.map(doc => doc.data() as Contacts);
     }
 }
