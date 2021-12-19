@@ -35,7 +35,6 @@ export async function validateLogin(
     }
     catch(err)
     {
-        console.log(err);
         await AsyncStorage.removeItem('authToken');
         dispatchFn.navigate('Auth');
     }
