@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import {
     Image,
@@ -10,6 +9,7 @@ import { NavigationStackScreenProps } from 'react-navigation-stack';
 import MessagePreview from '../../components/MessagePreview';
 import { Preview } from '../../types/Messages';
 import { RootStackParamList } from '../../types/RootStackParamList';
+import { getInformationsFromStorage } from '../../utils/getInformationsFromStorage';
 import { validateLogin } from '../../utils/validateLogin';
 import { styles } from './styles';
 
@@ -24,8 +24,13 @@ const Home: React.FC<Props> = ({ navigation }) => {
     }, []);
 
     const bootstrapAsync = async () => {
-        const token = await AsyncStorage.getItem('authToken');
+        const token = await getInformationsFromStorage('authToken');
         await validateLogin(token, navigation);
+    }
+
+    const onContactsPress = async () => {
+        const token = await getInformationsFromStorage('authToken');
+        await validateLogin(token, navigation, 'Contatos');
     }
 
     return (
@@ -34,7 +39,7 @@ const Home: React.FC<Props> = ({ navigation }) => {
                 messages ? <MessagePreview /> : <NoMessages />
             }
             <View style={styles.showContactsIcon}> 
-                <TouchableOpacity>
+                <TouchableOpacity onPress={onContactsPress}>
                     <Image
                         source={require('../../../assets/chat.png')}
                         style={styles.showContactIconImage}
