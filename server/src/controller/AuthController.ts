@@ -9,12 +9,16 @@ type ReqBodyAuth = {
 
 export class AuthController
 {
-    constructor(private model = new AuthModel()){}
+    private model;
+    
+    constructor()
+    {
+        this.model = new AuthModel();
+    }
 
     async authenticate(req: Request, res: Response)
     {
         const { user, password } = req.body as ReqBodyAuth;
-        
         const response = await this.model.checkUser(user, password);
 
         if(response ===  USER_NOT_FOUND || response === INVALID_PASSWORD)
