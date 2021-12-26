@@ -33,7 +33,7 @@ type ApiResponse = {
 
 const SignIn: React.FC<Props> = ({ navigation }) => {
 
-    const [ loginInformation, setLoginInformation ] = useState({ user: '', pwd: '' });
+    const [ loginInformation, setLoginInformation ] = useState({ email: '', pwd: '' });
     const [ isLoading, setIsLoading ] = useState(false);
     const [ errorMessage, setErrorMessage ] = useState('');
 
@@ -41,7 +41,7 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
     {
         setLoginInformation({
             ...loginInformation,
-            user: event.nativeEvent.text
+            email: event.nativeEvent.text
         });
     }
 
@@ -55,7 +55,7 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
 
     const onLogin = async () => {
         setIsLoading(!isLoading);
-        if(loginInformation.user === '' || loginInformation.pwd === '')
+        if(loginInformation.email === '' || loginInformation.pwd === '')
         {
             setIsLoading(!isLoading);
             Alert.alert('Preencha todos os campos', 'Por favor, preencha o e-mail e a senha para continuar');
@@ -65,7 +65,7 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
         try
         {
             const { data } = await api.post<ApiResponse>('/auth', {
-                user: loginInformation.user,
+                email: loginInformation.email,
                 password: loginInformation.pwd
             });
             
@@ -97,7 +97,7 @@ const SignIn: React.FC<Props> = ({ navigation }) => {
             <Text style={styles.labels}>E-mail</Text>
             <TextInput
                 placeholder="exemplo@gmail.com"
-                value={loginInformation.user}
+                value={loginInformation.email}
                 onChange={handleChangeUserName}
                 autoCapitalize="none"
                 autoCorrect={false}
