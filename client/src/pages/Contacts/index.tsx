@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Text } from "react-native";
+import { Alert, FlatList, View } from "react-native";
+import { ContactInfos } from "../../components/ContactInfo";
 import { api } from "../../services/api";
 import { Contact, User } from "../../types/User";
 import { getInformationsFromStorage } from "../../utils/getInformationsFromStorage";
@@ -34,7 +35,13 @@ const Contacts: React.FC = () => {
     };
 
     return (
-        <Text>{JSON.stringify(contacts)}</Text>
+        <View>
+            <FlatList
+                data={contacts}
+                renderItem={({ item, index }) => <ContactInfos contact={item} index={index} />}
+                keyExtractor={(_, index) => index.toString()}
+            />
+        </View>
     )
 }
 
