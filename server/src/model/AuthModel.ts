@@ -17,8 +17,9 @@ export class AuthModel
         this.database = new Database(USERS_COLLECTION_NAME);
     }
 
-    async checkUser(email: string, password: string)
+    async checkUser(email: string, pwd: string)
     {
+        console.log(email);
         const [ userFound ] = await this.database.findUserByEmail(email);
 
         if(!userFound)
@@ -26,7 +27,7 @@ export class AuthModel
             return USER_NOT_FOUND;
         }
 
-        const isValidPassword = passwordValidate(password, 'sha256', userFound.password);
+        const isValidPassword = passwordValidate(pwd, 'sha256', userFound.password);
 
         if(!isValidPassword)
         {
@@ -34,10 +35,11 @@ export class AuthModel
         }
         
         const token = this.generateAuthToken(userFound);
+        const { password, ...user } = userFound;
 
         return {
             token,
-            user: userFound
+            user: user
         };
     }
 
