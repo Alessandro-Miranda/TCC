@@ -39,6 +39,19 @@ export class Database implements IDatabaseRepositorie
         return userFound;    
     }
 
+    async findAllUsersByDepartment(department: string): Promise<User[]>
+    {
+        const queryToExecute = query(this.collectionRef, where('department', '==', department));
+        const querySnapshot = await getDocs(queryToExecute);
+        const users: User[] = [];
+
+        querySnapshot.forEach(doc => {
+            users.push(doc.data() as User);
+        });
+
+        return users;
+    }
+
     async findAllContacts(email: string): Promise<Contacts[]>
     {
         // Obtém a subcoleção de contatos o formato final representa o path /usuarios/{email}/contatos
