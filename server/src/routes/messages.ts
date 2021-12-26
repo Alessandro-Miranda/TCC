@@ -3,9 +3,7 @@ import { MessageController } from '../controller/MessageController';
 
 const messagesRouter = Router();
 
-const messageController = new MessageController();
-
-messagesRouter.get("/contacts/:username", messageController.getContacts.bind(messageController));
+messagesRouter.get("/contacts/:email/:department", (req, res) => new MessageController().getContacts(req, res));
 
 export { messagesRouter };
 
