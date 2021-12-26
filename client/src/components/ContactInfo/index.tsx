@@ -1,9 +1,9 @@
 import React from "react";
-import { Alert, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { TouchableHighlight } from "react-native-gesture-handler";
-import { styles } from "../../pages/Contacts/styles";
 import { Contact } from "../../types/User";
 import ProfileImage from "../ProfileImage";
+import { styles } from "./styles";
 
 type Infos = {
     contact: Contact;
@@ -11,8 +11,22 @@ type Infos = {
 };
 export const ContactInfos: React.FC<Infos> = ({ contact, index }) => {
     
-    const onSelectedContact = (chatId: string) => {
-        Alert.alert(chatId);
+    const onSelectedContact = (chatId?: string) => {
+        
+    }
+
+    const changeTextToLowerOrUppercase = (text: string) => {
+        if(text.length <= 5)
+        {
+            return text.toUpperCase();
+        }
+        else
+        {
+            return text
+                .split(" ")
+                .map(word => word[0].toUpperCase() + word.slice(1))
+                .join(" ");
+        }
     }
     
     return (
@@ -30,7 +44,9 @@ export const ContactInfos: React.FC<Infos> = ({ contact, index }) => {
                     style={styles.profileImage} />
                 <View>
                     <Text style={styles.contactName}>{contact.first_name} {contact.last_name}</Text>
-                    <Text style={styles.contactDepartment}>{contact.department}</Text>
+                    <Text style={styles.contactDepartment}>
+                        {changeTextToLowerOrUppercase(contact.department)}
+                    </Text>
                 </View>
             </View>
         </TouchableHighlight>
