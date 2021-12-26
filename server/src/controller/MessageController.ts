@@ -2,6 +2,11 @@ import { Request, Response } from "express";
 import { AuthModel } from "../model/AuthModel";
 import { MessageModel } from "../model/MessageModel";
 
+type Params = {
+    email: string;
+    department?: string;
+}
+
 export class MessageController
 {
     private model;
@@ -13,7 +18,7 @@ export class MessageController
 
     async getContacts(req: Request, res: Response)
     {
-        const userName = req.params.username;
+        const { email, department } = req.params as Params;
         const token = req.headers['x-access-token'];
 
         if(!token)
@@ -38,8 +43,17 @@ export class MessageController
                 
             return;
         }
+        
+        let contacts;
 
-        const contacts = await this.model.getAllContacts(userName);
+        if(department)
+        {
+            contacts = await this.model.getAllUsersFromSameDepartment(email, department.toLowerCase());
+        }
+        else
+        {
+            contacts = await this.model.getAllContacts(email);
+        }
 
         res.status(200).send(contacts);
     }
