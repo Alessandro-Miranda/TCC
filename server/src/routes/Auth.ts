@@ -5,8 +5,8 @@ const authRouter = Router();
 
 const authController = new AuthController();
 
-authRouter.post('/', authController.authenticate.bind(authController));
-authRouter.get('/confirm-authentication', authController.confirmAuthentication.bind(authController));
+authRouter.post('/', (req, res) => new AuthController().authenticate(req, res));
+authRouter.get('/confirm-authentication', (req, res) => new AuthController().confirmAuthentication(req, res));
 
 export { authRouter };
 
