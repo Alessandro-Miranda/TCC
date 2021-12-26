@@ -3,7 +3,7 @@ import { INVALID_PASSWORD, USER_NOT_FOUND } from "../constants/constants";
 import { AuthModel } from "../model/AuthModel";
 
 type ReqBodyAuth = {
-    user: string;
+    email: string;
     password: string;
 };
 
@@ -18,8 +18,8 @@ export class AuthController
 
     async authenticate(req: Request, res: Response)
     {
-        const { user, password } = req.body as ReqBodyAuth;
-        const response = await this.model.checkUser(user, password);
+        const { email, password } = req.body as ReqBodyAuth;
+        const response = await this.model.checkUser(email, password);
 
         if(response ===  USER_NOT_FOUND || response === INVALID_PASSWORD)
         {
