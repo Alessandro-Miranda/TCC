@@ -1,5 +1,8 @@
 import {
-    collection, CollectionReference, DocumentData, getDocs,
+    collection,
+    CollectionReference,
+    DocumentData,
+    getDocs,
     query,
     where
 } from "firebase/firestore";
