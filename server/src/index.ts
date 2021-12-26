@@ -4,7 +4,7 @@ import { authRouter, messagesRouter } from './routes';
 const server = express();
 const PORT = process.env.PORT || 4000;
 
-server.use(express.urlencoded({ extended: true, limit: '50mb' }))
+server.use(express.urlencoded({ extended: false, limit: '50mb' }))
 server.use(express.json({ limit: '50mb' }));
 server.use('/auth', authRouter);
 server.use('/messages', messagesRouter);
