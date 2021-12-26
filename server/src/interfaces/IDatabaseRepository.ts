@@ -6,5 +6,6 @@ export interface IDatabaseRepositorie
 {
     getRef(collectionName: string): CollectionReference<DocumentData>;
     findUserByEmail(email: string): Promise<User[]>;
+    findAllUsersByDepartment(department: string): Promise<User[]>;
     findAllContacts(username: string): Promise<Contacts[]>;
 }
