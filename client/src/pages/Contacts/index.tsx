@@ -15,11 +15,11 @@ const Contacts: React.FC = () => {
     const asyncInit = async () => {
         const userInformation = await getInformationsFromStorage('user') as string;
         const token = await getInformationsFromStorage('authToken');
-        const { email } = JSON.parse(userInformation) as User; 
+        const { email, department } = JSON.parse(userInformation) as User; 
         
         try
         {
-            const { data } = await api.get<Contact[]>(`/messages/contacts/${email}`, {
+            const { data } = await api.get<Contact[]>(`/messages/contacts/${email}/${department}`, {
                 headers: {
                     'x-access-token': token?.replace(/"/g, '')
                 }
