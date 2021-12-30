@@ -1,6 +1,8 @@
+import { Contact } from "./User";
+
 export type RootStackParamList = {
     Home: undefined;
+    SignIn: undefined;
     Profile: { userId: string };
-    Chats: { chatId: string };
-    Messages: { sort: 'latest' | 'top' } | undefined;
+    Message: { contact: Contact };
 };
