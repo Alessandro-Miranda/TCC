@@ -7,6 +7,7 @@ import AdminHome from './pages/AdminHome';
 import AuthLoadingScreen from './pages/AuthLoading';
 import Contacts from './pages/Contacts';
 import Home from './pages/Home';
+import Message from './pages/Message';
 import Profile from './pages/Profile';
 import SignIn from './pages/SignIn';
 import { colors } from './styles';
@@ -14,7 +15,7 @@ import { colors } from './styles';
 
 const AppStack = createStackNavigator(
     {
-        Mensagens: {
+        Home: {
             screen: Home,
             navigationOptions: ({ navigation }) => ({
                 headerTitle: () => <HomeHeader navigation={navigation} />
@@ -28,7 +29,10 @@ const AppStack = createStackNavigator(
             navigationOptions: () => ({
                 headerTitle: () => <ContactsHeader />
             }) 
-        }
+        },
+        Mensagem: {
+            screen: Message
+        },
     },
     {
         defaultNavigationOptions: {
