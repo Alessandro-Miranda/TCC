@@ -1,6 +1,8 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { TouchableHighlight } from "react-native-gesture-handler";
+import { NavigationStackScreenProps } from "react-navigation-stack";
+import { RootStackParamList } from "../../types/RootStackParamList";
 import { Contact } from "../../types/User";
 import ProfileImage from "../ProfileImage";
 import { styles } from "./styles";
@@ -8,11 +10,15 @@ import { styles } from "./styles";
 type Infos = {
     contact: Contact;
     index: number;
+    navigation: NavigationStackScreenProps<RootStackParamList, "Message">
 };
-export const ContactInfos: React.FC<Infos> = ({ contact, index }) => {
+
+export const ContactInfos: React.FC<Infos> = ({ contact, index, navigation }) => {
     
-    const onSelectedContact = (chatId?: string) => {
-        
+    const onSelectedContact = (contact: Contact) => {
+        navigation.navigation.navigate('Mensagem', {
+            contact
+        });
     }
 
     const changeTextToLowerOrUppercase = (text: string) => {
@@ -31,7 +37,7 @@ export const ContactInfos: React.FC<Infos> = ({ contact, index }) => {
     
     return (
         <TouchableHighlight
-        onPress={() => onSelectedContact(contact.chatID)}
+            onPress={() => onSelectedContact(contact)}
             style={styles.touchableArea}
         >
             <View style={styles.contactInfoContainer} key={index}>
@@ -43,7 +49,9 @@ export const ContactInfos: React.FC<Infos> = ({ contact, index }) => {
                         : contact.image}`}
                     style={styles.profileImage} />
                 <View>
-                    <Text style={styles.contactName}>{contact.first_name} {contact.last_name}</Text>
+                    <Text style={styles.contactName}>
+                        {contact.first_name} {contact.last_name}
+                    </Text>
                     <Text style={styles.contactDepartment}>
                         {changeTextToLowerOrUppercase(contact.department)}
                     </Text>
