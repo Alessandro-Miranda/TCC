@@ -19,7 +19,6 @@ export class AuthModel
 
     async checkUser(email: string, pwd: string)
     {
-        console.log(email);
         const [ userFound ] = await this.database.findUserByEmail(email);
 
         if(!userFound)
