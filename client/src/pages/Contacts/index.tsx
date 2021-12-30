@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Alert, FlatList, View } from "react-native";
+import { NavigationStackScreenProps } from "react-navigation-stack";
 import { ContactInfos } from "../../components/ContactInfo";
 import { api } from "../../services/api";
+import { RootStackParamList } from "../../types/RootStackParamList";
 import { Contact, User } from "../../types/User";
 import { getInformationsFromStorage } from "../../utils/getInformationsFromStorage";
 
-const Contacts: React.FC = () => {
+type Props = NavigationStackScreenProps<RootStackParamList, "Message">;
+
+const Contacts: React.FC<Props> = (navigation) => {
     const [ contacts, setContacts ] = useState<Contact[]>([]);
 
     useEffect(() => {
@@ -38,7 +42,7 @@ const Contacts: React.FC = () => {
         <View>
             <FlatList
                 data={contacts}
-                renderItem={({ item, index }) => <ContactInfos contact={item} index={index} />}
+                renderItem={({ item, index }) => <ContactInfos contact={item} navigation={navigation} index={index} />}
                 keyExtractor={(_, index) => index.toString()}
             />
         </View>
