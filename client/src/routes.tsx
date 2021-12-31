@@ -3,6 +3,7 @@ import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import ContactsHeader from './components/ContactsHeader';
 import HomeHeader from './components/HomeHeader';
+import MessageHeader from './components/MessageHeader';
 import AdminHome from './pages/AdminHome';
 import AuthLoadingScreen from './pages/AuthLoading';
 import Contacts from './pages/Contacts';
@@ -31,7 +32,12 @@ const AppStack = createStackNavigator(
             }) 
         },
         Mensagem: {
-            screen: Message
+            screen: Message,
+            navigationOptions: () => ({
+                header: ({ navigation }) => (
+                    <MessageHeader navigation={navigation} />
+                )
+            })
         },
     },
     {
