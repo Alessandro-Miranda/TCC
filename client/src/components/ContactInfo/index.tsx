@@ -21,7 +21,7 @@ export const ContactInfos: React.FC<Infos> = ({ contact, index, navigation }) =>
         });
     }
 
-    const changeTextToLowerOrUppercase = (text: string) => {
+    const changeTextToUppercase = (text: string) => {
         if(text.length <= 5)
         {
             return text.toUpperCase();
@@ -39,6 +39,7 @@ export const ContactInfos: React.FC<Infos> = ({ contact, index, navigation }) =>
         <TouchableHighlight
             onPress={() => onSelectedContact(contact)}
             style={styles.touchableArea}
+            underlayColor={'unset'}
         >
             <View style={styles.contactInfoContainer} key={index}>
                 <ProfileImage
@@ -53,7 +54,7 @@ export const ContactInfos: React.FC<Infos> = ({ contact, index, navigation }) =>
                         {contact.first_name} {contact.last_name}
                     </Text>
                     <Text style={styles.contactDepartment}>
-                        {changeTextToLowerOrUppercase(contact.department)}
+                        {changeTextToUppercase(contact.department)}
                     </Text>
                 </View>
             </View>
