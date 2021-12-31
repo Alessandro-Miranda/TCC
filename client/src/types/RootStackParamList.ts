@@ -4,5 +4,8 @@ export type RootStackParamList = {
     Home: undefined;
     SignIn: undefined;
     Profile: { userId: string };
-    Message: { contact: Contact };
+    Message: {
+        contact: Contact;
+        chatID: string;
+    };
 };
