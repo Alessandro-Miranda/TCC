@@ -4,3 +4,9 @@ export type Preview = {
     time: string;
     photo: string;
 }
+
+export enum MessageState {
+    Wait = 'Wait',
+    Sent = 'Sent',
+    Received = 'Received'
+}
