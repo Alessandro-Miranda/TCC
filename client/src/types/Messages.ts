@@ -5,6 +5,13 @@ export type Preview = {
     photo: string;
 }
 
+export type MessageBody = {
+    message: string;
+    from: string;
+    timestamp: string;
+    state?: string;
+}
+
 export enum MessageState {
     Wait = 'Wait',
     Sent = 'Sent',
