@@ -3,7 +3,7 @@ import { Image, NativeSyntheticEvent, TextInput, TextInputChangeEventData, View 
 import { ScrollView } from "react-native-gesture-handler";
 import { NavigationStackScreenProps } from "react-navigation-stack";
 import MessagesText from "../../components/MessagesText";
-import { MessageState } from "../../types/Messages";
+import { MessageBody } from "../../types/Messages";
 import { RootStackParamList } from "../../types/RootStackParamList";
 import { Contact } from "../../types/User";
 import { styles } from "./styles";
@@ -15,12 +15,20 @@ const Message: React.FC <Props> = ({ navigation }) => {
     const [ contact, setContact ] = useState({} as Contact);
     const [ chatID, setChatID] = useState('');
     const [ message, setMessage ] = useState('');
+    const [ allMessages, setAllMessages ] = useState([] as MessageBody[]);
 
     useEffect(() => {
         const contact = navigation.state.params?.contact as Contact;
         const chatID = navigation.state.params?.chatID;
         
         setContact(contact);
+        setAllMessages([
+            {
+                message: 'coe neguim',
+                from: 'joao@empresa.com',
+                timestamp: '1640975957317'
+            },
+        ]);
 
         if(chatID !== "") setChatID(chatID);
     }, []);
@@ -34,20 +42,17 @@ const Message: React.FC <Props> = ({ navigation }) => {
             <ScrollView
                 style={styles.messageWrapper}
             >
-                <MessagesText
-                    message="E aí, meu mano!! Só na paz? tudo no progresso hj?"
-                    from="joão@empresa.com"
-                    timestamp="1640975957317"
-                    state={MessageState.Received}
-                    key={1}
-                />
-                <MessagesText
-                    message="Salve, neguim! To suave e vc?"
-                    from="alessandro@empresa.com.br"
-                    timestamp="1640976081729"
-                    state={MessageState.Wait}
-                    key={2}
-                />
+                {
+                    allMessages.map((message, index) => (
+                        <MessagesText
+                            message={message.message}
+                            from={message.from}
+                            timestamp={message.timestamp}
+                            state={message.state}
+                            key={index}
+                        />
+                    ))
+                }
             </ScrollView>
             <View style={styles.messageInputContainer}>
                 <TextInput
