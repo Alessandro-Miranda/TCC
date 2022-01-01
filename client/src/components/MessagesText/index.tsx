@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Text, View } from "react-native";
-import { MessageState } from "../../types/Messages";
+import { Image, Text, View } from "react-native";
+import { MessageBody, MessageState } from "../../types/Messages";
 import { User } from "../../types/User";
 import { getInformationsFromStorage } from "../../utils/getInformationsFromStorage";
 import { styles } from "./styles";
 
-type Props = {
-    message: string;
-    timestamp: string;
-    from: string;
-    state?: MessageState
-};
-
-const MessagesText: React.FC<Props> = ({
+const MessagesText: React.FC<MessageBody> = ({
     message,
     from,
     timestamp,
@@ -34,6 +27,32 @@ const MessagesText: React.FC<Props> = ({
             setUserEmail(email);
         }
     }
+
+    const getTimeFromTimestamp = () => {
+        const date = new Date(Number(timestamp));
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        
+        return `${hours}:${minutes}`;
+    }
+
+    const getUriImage = () => {
+        const baseUrl = '../../../assets/';
+        
+        if(state === MessageState.Received)
+        {
+            return require(baseUrl + "double-check.png");
+        }
+        else if(state === MessageState.Sent)
+        {
+            return require(baseUrl + "check.png");
+        }
+        else
+        {
+            return require(baseUrl + "clock.png");
+        }
+    }
+
     return (
         <View style={[
             styles.messageWrapper,
@@ -47,6 +66,19 @@ const MessagesText: React.FC<Props> = ({
             <Text style={styles.messageText}>
                 {message}
             </Text>
+            <View style={styles.messageHourAndStatusContainer}>
+                <Text style={styles.messageHour}>
+                    {getTimeFromTimestamp()}
+                </Text>
+                {
+                    userEmail === from && (
+                        <Image
+                            source={getUriImage()}
+                            style={styles.messageStateIcon}
+                        />
+                    )
+                }
+            </View>
         </View>
     );
 };
