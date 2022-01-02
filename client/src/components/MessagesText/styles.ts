@@ -4,6 +4,7 @@ import { colors } from "../../styles";
 export const styles = StyleSheet.create({
     messageWrapper: {
         maxWidth: '80%',
+        minWidth: '24%',
         marginTop: 20,
         marginLeft: 20,
         marginRight: 20,
@@ -24,6 +25,9 @@ export const styles = StyleSheet.create({
         borderBottomRightRadius: 20,
         borderBottomLeftRadius: 20,
         marginLeft: 'auto'
+    },
+    messageSentWaiting: {
+        opacity: .5
     },
     messageText: {
         color: colors.primary,
