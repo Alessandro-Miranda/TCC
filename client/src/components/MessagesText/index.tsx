@@ -29,7 +29,7 @@ const MessagesText: React.FC<MessageBody> = ({
     }
 
     const getTimeFromTimestamp = () => {
-        const date = new Date(Number(timestamp));
+        const date = new Date(timestamp);
         const hours = date.getHours();
         const minutes = date.getMinutes();
         
@@ -56,11 +56,13 @@ const MessagesText: React.FC<MessageBody> = ({
     return (
         <View style={[
             styles.messageWrapper,
-            userEmail === from ? styles.messageSent : styles.messageReceived
+            userEmail === from ? styles.messageSent : styles.messageReceived,
+            state === MessageState.Wait && styles.messageSentWaiting
         ]}>
             <View style={[
                 styles.messageContainerDetail,
-                userEmail === from ? styles.messageContainerDetailSent : styles.messageContainerDetailReceived
+                userEmail === from ? styles.messageContainerDetailSent : styles.messageContainerDetailReceived,
+                { opacity: state === MessageState.Wait ? 0 : 1 }
             ]}>
             </View>
             <Text style={styles.messageText}>
