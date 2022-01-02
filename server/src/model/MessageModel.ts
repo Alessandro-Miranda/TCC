@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { USERS_COLLECTION_NAME } from "../constants/constants";
 import { Database } from "../repositories/Database";
 import { Contacts } from "../types/Contacts";
@@ -35,5 +36,23 @@ export class MessageModel
             }
         }
         return allContacts;
+    }
+
+    async createChat(userEmail: string, contactEmail: string)
+    {
+        const uniqueChatId = uuidv4();
+        const hasCreateadChat = await this.database.createChat(userEmail, contactEmail, uniqueChatId);
+
+        if(hasCreateadChat)
+        {
+            const newContactId = uuidv4();
+            const hasAddedNewContact = await this.database.addContact(userEmail, contactEmail, newContactId, uniqueChatId);
+            
+            return hasAddedNewContact ? uniqueChatId : new Error('An Error has occured creating a new chat');
+        }
+        else
+        {
+            throw new Error('An Error has occured creating a new chat');
+        }
     }
 }
