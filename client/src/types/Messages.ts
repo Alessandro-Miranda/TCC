@@ -8,7 +8,7 @@ export type Preview = {
 export type MessageBody = {
     message: string;
     from: string;
-    timestamp: string;
+    timestamp: number;
     state?: string;
 }
 
