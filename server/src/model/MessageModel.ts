@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { USERS_COLLECTION_NAME } from "../constants/constants";
 import { Database } from "../repositories/Database";
 import { Contacts } from "../types/Contacts";
+import { MessageBody } from '../types/Message';
 import { User } from "../types/User";
 
 type AllUsers = Omit<User, "password">;
@@ -53,6 +54,20 @@ export class MessageModel
         else
         {
             throw new Error('An Error has occured creating a new chat');
+        }
+    }
+
+    async sendMessage(message: MessageBody)
+    {
+        const response = await this.database.sendMessage(message);
+
+        if(response)
+        {
+            return true;
+        }
+        else
+        {
+            throw new Error('An Error has occured sending message');
         }
     }
 }
