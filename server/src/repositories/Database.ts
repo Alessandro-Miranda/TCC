@@ -9,6 +9,7 @@ import {
 import { firestoreApp } from "../config/firebaseConfig";
 import { IDatabaseRepositorie } from "../interfaces/IDatabaseRepository";
 import { Contacts } from "../types/Contacts";
+import { MessageBody, MessageState } from "../types/Message";
 import { User } from "../types/User";
 
 export class Database implements IDatabaseRepositorie
@@ -105,6 +106,22 @@ export class Database implements IDatabaseRepositorie
             return false;
         });
 
+        return response;    
+    }
+
+    async sendMessage(message: MessageBody): Promise<Boolean>
+    {
+        const chatMessage = doc(firestoreApp, 'chats', message.chatID, 'messages');
+        const messageInfo = {
+            ...message,
+            state: MessageState.Sent
+        }
+        const response = setDoc(chatMessage, messageInfo, { merge: true }).then(() => {
+            return true;
+        }).catch(() => {
+            return false;
+        });
+        
         return response;    
     }
 }
