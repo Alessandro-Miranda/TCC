@@ -5,7 +5,7 @@ import { User } from "../../types/User";
 import { getInformationsFromStorage } from "../../utils/getInformationsFromStorage";
 import { styles } from "./styles";
 
-const MessagesText: React.FC<MessageBody> = ({
+const MessagesText: React.FC<Omit<MessageBody, "chatID" | "messageID" | "to">> = ({
     message,
     from,
     timestamp,
