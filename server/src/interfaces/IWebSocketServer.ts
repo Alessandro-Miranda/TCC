@@ -6,6 +6,7 @@ export interface IWebSocketServer
 {
     listen(): void;
     connected(socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>): void;
-    newMessage(chatID?: string): void;
+    newMessage(chatID?: string, userEmail?: string): void;
     disconnect(reason: SocketDisconnectReason): void;
+    getAllMessages(userEmail: string): void;
 }
