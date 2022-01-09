@@ -103,7 +103,16 @@ export class MessageController
 
         try
         {
-            await this.model.sendMessage(message);
+            const isSent = await this.model.sendMessage(message);
+            
+            if(isSent)
+            {
+                res.status(200).send({
+                    isSent: true,
+                    message: 'message sent successfully'
+                });
+                return;
+            }
         }
         catch(err)
         {
