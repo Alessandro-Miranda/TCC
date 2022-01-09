@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AuthModel } from "../model/AuthModel";
 import { MessageModel } from "../model/MessageModel";
+import { MessageBody } from "../types/Message";
 
 type Params = {
     email: string;
@@ -94,7 +95,25 @@ export class MessageController
 
             return;
         }
+    }
 
+    async sendMessage(req: Request, res: Response)
+    {
+        const message = req.body as MessageBody;
+
+        try
+        {
+            await this.model.sendMessage(message);
+        }
+        catch(err)
+        {
+            this.sendRequestErrorResponse(res, {
+                status: 500,
+                header: ['500', 'Internal Server Error'],
+                send: { message: String(err) }
+            })
+            return;
+        }
     }
 
     private checkIfUserIsAuthenticated(token: string | string[] | undefined)
