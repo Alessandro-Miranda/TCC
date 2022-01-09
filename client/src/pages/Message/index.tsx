@@ -12,11 +12,12 @@ import { getInformationsFromStorage } from "../../utils/getInformationsFromStora
 import { styles } from "./styles";
 
 type Props = NavigationStackScreenProps<RootStackParamList, "Message">;
+type Message = Omit<MessageBody, "chatID" | "messageID" | "to">
 
 const Message: React.FC <Props> = ({ navigation }) => {
     const [ message, setMessage ] = useState('');
     const [ userInfos, setUserInfos ] = useState({} as User);
-    const [ allMessages, setAllMessages ] = useState([] as MessageBody[]);
+    const [ allMessages, setAllMessages ] = useState([] as Message[]);
     const [ chatInfos, setChatInfos ] = useState({ chatID: '', contactInfo: {} as Contact });
     const [ socket, setSocket ] = useState<Socket>();
     
