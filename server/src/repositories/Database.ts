@@ -1,4 +1,5 @@
 import {
+    arrayUnion,
     collection,
     CollectionReference,
     doc,
@@ -111,12 +112,12 @@ export class Database implements IDatabaseRepositorie
 
     async sendMessage(message: MessageBody): Promise<Boolean>
     {
-        const chatMessage = doc(firestoreApp, 'chats', message.chatID, 'messages');
+        const chatMessage = doc(firestoreApp, 'chats', message.chatID, 'mensagens', 'mensagem');
         const messageInfo = {
             ...message,
             state: MessageState.Sent
         }
-        const response = setDoc(chatMessage, messageInfo, { merge: true }).then(() => {
+        const response = setDoc(chatMessage, { mensagem: arrayUnion(messageInfo) }, { merge: true }).then(() => {
             return true;
         }).catch(() => {
             return false;
