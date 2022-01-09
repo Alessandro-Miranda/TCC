@@ -9,7 +9,6 @@ server.use(express.urlencoded({ extended: false, limit: '50mb' }))
 server.use(express.json({ limit: '50mb' }));
 server.use('/auth', authRouter);
 server.use('/messages', messagesRouter);
-server.get('/', (_, res) => res.status(200).send('recebeu'));
 
 const wsServer = new WebSocketServer(server);
 
