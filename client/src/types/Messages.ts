@@ -9,7 +9,7 @@ export type MessageBody = {
     message: string;
     from: string;
     timestamp: number;
-    state?: string;
+    state: string;
 }
 
 export enum MessageState {
