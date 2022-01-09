@@ -6,10 +6,13 @@ export type Preview = {
 }
 
 export type MessageBody = {
+    chatID: string;
+    messageID: string;
     message: string;
     from: string;
+    to: string;
     timestamp: number;
-    state: string;
+    state: MessageState
 }
 
 export enum MessageState {
