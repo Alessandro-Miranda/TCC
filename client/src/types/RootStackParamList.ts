@@ -6,6 +6,5 @@ export type RootStackParamList = {
     Profile: { userId: string };
     Message: {
         contact: Contact;
-        chatID: string;
     };
 };
