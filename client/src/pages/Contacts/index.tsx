@@ -23,7 +23,7 @@ const Contacts: React.FC<Props> = (navigation) => {
         
         try
         {
-            const { data } = await api.get<Contact[]>(`/messages/contacts/${email}/${department}`, {
+            const { data } = await api.get<Contact[]>(`/messages/contacts/${email}`, {
                 headers: {
                     'x-access-token': token?.replace(/"/g, '')
                 }
@@ -33,6 +33,7 @@ const Contacts: React.FC<Props> = (navigation) => {
         }
         catch(err)
         {
+            console.log(err);
             Alert.alert('Ocorreu um erro inesperado. Por favor, tente novamente');
         }
 
