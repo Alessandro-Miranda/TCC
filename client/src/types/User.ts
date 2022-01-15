@@ -4,6 +4,7 @@ export type Contact = {
     first_name: string;
     last_name: string;
     image?: string;
+    chatID: string;
 }
 
 export type User = {
