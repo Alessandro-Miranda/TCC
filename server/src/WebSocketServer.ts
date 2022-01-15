@@ -2,20 +2,23 @@ import { Express } from 'express';
 import { doc, onSnapshot, Unsubscribe } from 'firebase/firestore';
 import { createServer, Server } from 'http';
 import { Server as SocketIoServer, Socket } from 'socket.io';
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { firestoreApp } from './config/firebaseConfig';
 import { CONNECTION, DISCONNECT, NEW_MESSAGE } from './constants/constants';
 import { IWebSocketServer } from './interfaces/IWebSocketServer';
 import { MessageBody } from './types/Message';
 import { SocketDisconnectReason } from './types/WsServer';
 
+type NewMessages = {
+    mensagem: MessageBody[];
+};
+
 export class WebSocketServer implements IWebSocketServer
 {
     public server: Server;
     public io: SocketIoServer;
-    public unsub: Unsubscribe = () => {};
-    public newMessages: MessageBody[] = [];
-
+    static unsub: Unsubscribe = () => {};
+    public messages: MessageBody[] = [];
+    
     constructor(server: Express)
     {
         this.server = createServer(server);
@@ -26,29 +29,29 @@ export class WebSocketServer implements IWebSocketServer
     listen(): void
     {
         this.io.on(CONNECTION, this.connected);
-        this.io.on(NEW_MESSAGE, this.newMessage);
-        this.io.on(DISCONNECT, this.disconnect);
     }
 
-    connected(socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>): void
+    connected(socket: Socket): void
     {
-        // Aqui vai o status de usuário online
-        console.log('New user connected')
+        console.log('New user connected');
+        socket.on(NEW_MESSAGE, (chatID) => {
+            WebSocketServer.newMessage(chatID, socket);
+        });
+
+        socket.on(DISCONNECT, (reason) => {
+            WebSocketServer.disconnect(reason as SocketDisconnectReason);
+        });
     }
 
-    newMessage(chatID?: string, userEmail?: string): void
+    static newMessage(chatID: string, socket: Socket): void
     {
-        if(!chatID && userEmail)
-        {
-            this.getAllMessages(userEmail);
-        }
-        else if(chatID)
-        {
-            this.unsub = onSnapshot(doc(firestoreApp, 'chats', chatID), (doc) => {
-                this.newMessages.push(doc.data() as MessageBody);
-                this.io.emit(NEW_MESSAGE, this.newMessages);
-            });
-        }
+        this.unsub = onSnapshot(doc(firestoreApp, 'chats', chatID, 'mensagens', 'mensagem'), (doc) => {
+            if(doc.exists())
+            {
+                const messages = doc.data() as NewMessages;
+                socket.emit(NEW_MESSAGE, messages.mensagem);
+            }
+        });
     }
 
     getAllMessages(userEmail: string): void
@@ -56,7 +59,7 @@ export class WebSocketServer implements IWebSocketServer
         
     }
     
-    disconnect(reason: SocketDisconnectReason): void
+    static disconnect(reason: SocketDisconnectReason): void
     {
         console.log('User disconnected');
         this.unsub();
