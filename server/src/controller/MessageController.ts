@@ -5,7 +5,11 @@ import { MessageBody } from "../types/Message";
 
 type Params = {
     email: string;
-    department?: string;
+    department: string;
+}
+
+type GetContactsParams = {
+    email: string;
 }
 
 type CreateChatBody = {
@@ -28,7 +32,7 @@ export class MessageController
         this.model = new MessageModel();
     }
 
-    async getContacts(req: Request, res: Response)
+    async getContactsBySameDepartment(req: Request, res: Response)
     {
         const { email, department } = req.params as Params;
         const token = req.headers['x-access-token'];
@@ -41,16 +45,25 @@ export class MessageController
             return;
         }
         
-        let contacts;
+        const contacts = await this.model.getAllUsersFromSameDepartment(email, department.toLowerCase());
 
-        if(department)
+        res.status(200).send(contacts);
+    }
+
+    async getContacts(req: Request, res: Response)
+    {
+        const { email } = req.params as GetContactsParams;
+        const token = req.headers['x-access-token'];
+    
+        const checkAuthentication = this.checkIfUserIsAuthenticated(token);
+
+        if(!checkAuthentication.continue)
         {
-            contacts = await this.model.getAllUsersFromSameDepartment(email, department.toLowerCase());
+            this.sendRequestErrorResponse(res, checkAuthentication as ResponseErrorBody)
+            return;
         }
-        else
-        {
-            contacts = await this.model.getAllContacts(email);
-        }
+        
+        const contacts = await this.model.getAllContacts(email);
 
         res.status(200).send(contacts);
     }
