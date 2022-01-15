@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Image, NativeSyntheticEvent, TextInput, TextInputChangeEventData, View } from "react-native";
 import { ScrollView, TouchableHighlight } from "react-native-gesture-handler";
+import 'react-native-get-random-values';
 import { NavigationStackScreenProps } from "react-navigation-stack";
 import { io, Socket } from "socket.io-client";
+import { v4 as uuidv4 } from 'uuid';
 import MessagesText from "../../components/MessagesText";
+import { NEW_MESSAGE } from "../../constants";
 import { api } from "../../services/api";
 import { MessageBody, MessageState } from "../../types/Messages";
 import { RootStackParamList } from "../../types/RootStackParamList";
@@ -12,33 +15,40 @@ import { getInformationsFromStorage } from "../../utils/getInformationsFromStora
 import { styles } from "./styles";
 
 type Props = NavigationStackScreenProps<RootStackParamList, "Message">;
-type Message = Omit<MessageBody, "chatID" | "messageID" | "to">
+type Message = Omit<MessageBody, "chatID" | "to">
 
 const Message: React.FC <Props> = ({ navigation }) => {
     const [ message, setMessage ] = useState('');
     const [ userInfos, setUserInfos ] = useState({} as User);
     const [ allMessages, setAllMessages ] = useState([] as Message[]);
-    const [ chatInfos, setChatInfos ] = useState({ chatID: '', contactInfo: {} as Contact });
+    const [ chatInfos, setChatInfos ] = useState({} as Contact);
     const [ socket, setSocket ] = useState<Socket>();
     
     useEffect(() => {
         asyncBootstrap();
         const socket = io("http://192.168.1.4:4000/");
-
+        
         setSocket(socket);
         
         const contactInfo = navigation.state.params?.contact as Contact;
-        const chatID = navigation.state.params?.chatID;
-
         setChatInfos({
-            chatID,
-            contactInfo
+            ...contactInfo
         });
+        
+        if(contactInfo.chatID)
+        {
+            socket.emit(NEW_MESSAGE, contactInfo.chatID);
+        }
 
         return () => {
             socket.disconnect();
         }
     }, []);
+
+    socket?.on(NEW_MESSAGE, (data: MessageBody[]) => {
+        
+        setAllMessages(data);
+    });
 
     const asyncBootstrap = async () => {
         const user = await getInformationsFromStorage('user');
@@ -57,15 +67,16 @@ const Message: React.FC <Props> = ({ navigation }) => {
         const newMessage = [...allMessages];
 
         newMessage.push({
+            messageID: uuidv4(),
             from: userInfos.email,
-            message,
+            message: message.trimEnd(),
             timestamp: new Date().getTime(),
             state: MessageState.Wait
         });
         
         setAllMessages(newMessage);
-
-        if(chatInfos.chatID === '')
+        
+        if(!chatInfos.chatID)
         {
             const wasCreated = await createChat();
 
@@ -75,34 +86,62 @@ const Message: React.FC <Props> = ({ navigation }) => {
             }
         }
 
-        await sendMessage();
-        setMessage('');
-
+        await sendMessage(newMessage);
     }
 
-    const sendMessage = async () => {
-
+    const sendMessage = async (messages: Message[]) => {
+        try
+        {
+            const lastMessage = messages[messages.length - 1] as Message;
+            
+            const messageToSend: MessageBody = {
+                chatID: chatInfos.chatID,
+                ...lastMessage,
+                to: chatInfos.email
+            };
+            
+            const { data } = await api.post<{ isSent: boolean, message: string }>("/messages/send", messageToSend);
+            socket?.emit(NEW_MESSAGE, 'teste');
+            if(!data.isSent)
+            {
+                Alert.alert('Ocorreu um erro ao enviar a mensagem', "Por favor, tente novamente");
+                return;
+            }
+            setMessage('');
+        }
+        catch(err)
+        {
+            Alert.alert('Ocorreu um erro ao enviar a mensagem', "Por favor, tente novamente");
+            return;
+        }
     }
 
     const createChat = async (): Promise<boolean> => {
         try
         {
             const token = await getInformationsFromStorage('authToken');
-
+            
             const { data } = await api.post<{ chatID: string }>('/messages/create-chat', {
                 userEmail: userInfos.email,
-                contactEmail: chatInfos.contactInfo.email,
+                contactEmail: chatInfos.email,
+            },
+            {
                 headers: {
                     'x-access-token': token?.replace(/"/g, '')
                 }
             });
-
-            const chat = {
+                    
+            setChatInfos({
                 ...chatInfos,
                 chatID: data.chatID
-            };
+            });
 
-            setChatInfos(chat);
+            navigation.setParams({
+                Message: {
+                    contact: { ...chatInfos }
+                }
+            });
+            
             return true;
         }
         catch(err)
@@ -118,13 +157,13 @@ const Message: React.FC <Props> = ({ navigation }) => {
                 style={styles.messageWrapper}
             >
                 {
-                    allMessages.map((message, index) => (
+                    allMessages.map((message) => (
                         <MessagesText
                             message={message.message}
                             from={message.from}
                             timestamp={message.timestamp}
                             state={message.state}
-                            key={index}
+                            messageID={message.messageID}
                         />
                     ))
                 }

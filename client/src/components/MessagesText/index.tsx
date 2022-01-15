@@ -5,11 +5,12 @@ import { User } from "../../types/User";
 import { getInformationsFromStorage } from "../../utils/getInformationsFromStorage";
 import { styles } from "./styles";
 
-const MessagesText: React.FC<Omit<MessageBody, "chatID" | "messageID" | "to">> = ({
+const MessagesText: React.FC<Omit<MessageBody, "chatID" | "to">> = ({
     message,
     from,
     timestamp,
-    state
+    state,
+    messageID
 }) => {
     const [ userEmail, setUserEmail ] = useState('');
 
@@ -54,11 +55,14 @@ const MessagesText: React.FC<Omit<MessageBody, "chatID" | "messageID" | "to">> =
     }
 
     return (
-        <View style={[
+        <View
+        style={[
             styles.messageWrapper,
             userEmail === from ? styles.messageSent : styles.messageReceived,
             state === MessageState.Wait && styles.messageSentWaiting
-        ]}>
+        ]}
+        key={messageID}
+        >
             <View style={[
                 styles.messageContainerDetail,
                 userEmail === from ? styles.messageContainerDetailSent : styles.messageContainerDetailReceived,
