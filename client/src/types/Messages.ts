@@ -1,8 +1,9 @@
+import { Contact } from "./User"
+
 export type Preview = {
-    contactName: string;
+    contact: Contact
     messagePreview: string;
-    time: string;
-    photo: string;
+    timestamp: number;
 }
 
 export type MessageBody = {
