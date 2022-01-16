@@ -50,12 +50,12 @@ export const styles = StyleSheet.create({
     },
     messageContainerDetailReceived: {
         left: -15,
-        top: -6,
+        top: -6.5,
         borderRightColor: colors.fontColor,
     },
     messageContainerDetailSent: {
         right: -10,
-        top: -6,
+        top: -6.8,
         borderRightColor: colors.secundary,
         transform: [{ rotate: '-205deg' }]
     },
