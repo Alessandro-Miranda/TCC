@@ -26,7 +26,7 @@ const Message: React.FC <Props> = ({ navigation }) => {
     
     useEffect(() => {
         asyncBootstrap();
-        const socket = io("http://192.168.1.4:4000/");
+        const socket = io("http://192.168.1.2:4000/");
         
         setSocket(socket);
         
@@ -164,6 +164,7 @@ const Message: React.FC <Props> = ({ navigation }) => {
                             timestamp={message.timestamp}
                             state={message.state}
                             messageID={message.messageID}
+                            key={message.messageID}
                         />
                     ))
                 }
