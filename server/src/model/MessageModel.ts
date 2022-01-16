@@ -70,4 +70,12 @@ export class MessageModel
             throw new Error('An Error has occured sending message');
         }
     }
+
+    async getMessages(email: string)
+    {
+        const response = await this.database.getMessages(email);
+
+        if(response) return response;
+        else throw new Error('An Error has occured getting messages')
+    }
 }

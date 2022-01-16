@@ -138,6 +138,29 @@ export class MessageController
         }
     }
 
+    async getMessages(req: Request, res: Response)
+    {
+        const email = req.params.email;
+
+        try
+        {
+            const response = await this.model.getMessages(email);
+
+            if(response)
+            {
+                res.status(200).send(response);
+            }
+        }
+        catch(err)
+        {
+            this.sendRequestErrorResponse(res, {
+                header: ['500', 'Internal Server Error'],
+                send: { message: String(err) },
+                status: 500
+            })
+        }
+    }
+
     private checkIfUserIsAuthenticated(token: string | string[] | undefined)
     {
         const authModel = new AuthModel();
