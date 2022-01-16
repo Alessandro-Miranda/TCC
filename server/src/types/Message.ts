@@ -13,3 +13,11 @@ export enum MessageState {
     Sent = 'Sent',
     Received = 'Received'
 }
+
+export type Preview = {
+    contactName: string;
+    messagePreview: string;
+    time: number;
+    photo: string;
+    chatID: string;
+}
