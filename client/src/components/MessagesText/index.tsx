@@ -34,7 +34,7 @@ const MessagesText: React.FC<Omit<MessageBody, "chatID" | "to">> = ({
         const hours = date.getHours();
         const minutes = date.getMinutes();
         
-        return `${hours}:${minutes}`;
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
     }
 
     const getUriImage = () => {
