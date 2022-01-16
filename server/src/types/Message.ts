@@ -1,3 +1,5 @@
+import { Contacts } from './Contacts';
+
 export type MessageBody = {
     chatID: string;
     messageID: string;
@@ -15,9 +17,7 @@ export enum MessageState {
 }
 
 export type Preview = {
-    contactName: string;
+    contact: Contacts
     messagePreview: string;
-    time: number;
-    photo: string;
-    chatID: string;
+    timestamp: number;
 }
