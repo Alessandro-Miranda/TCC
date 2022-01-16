@@ -155,7 +155,7 @@ export class Database implements IDatabaseRepositorie
         for(const chat of chats)
         {
             const docRef = doc(firestoreApp, 'chats', chat.chatID, 'mensagens', 'mensagem');
-            const contactName = await this.findUserByEmail(chat.contactEmail);
+            const contactInfos = await this.findUserByEmail(chat.contactEmail);
             const docSnapshoot = await getDoc(docRef);
 
             if(docSnapshoot.exists())
@@ -164,11 +164,15 @@ export class Database implements IDatabaseRepositorie
                 const lastMessage = allMessages.mensagem.pop() as MessageBody;
 
                 chatsInfo.push({
-                    chatID: chat.chatID,
-                    contactName: `${contactName.first_name} ${contactName.last_name}`,
+                    contact: {
+                        department: contactInfos.department,
+                        chatID: chat.chatID,
+                        email: contactInfos.email,
+                        first_name: contactInfos.first_name,
+                        last_name: contactInfos.last_name
+                    },
                     messagePreview: lastMessage.message,
-                    photo: '',
-                    time: lastMessage.timestamp
+                    timestamp: lastMessage.timestamp
                 });
             }
         }
