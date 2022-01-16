@@ -19,7 +19,7 @@ const Contacts: React.FC<Props> = (navigation) => {
     const asyncInit = async () => {
         const userInformation = await getInformationsFromStorage('user') as string;
         const token = await getInformationsFromStorage('authToken');
-        const { email, department } = JSON.parse(userInformation) as User; 
+        const { email } = JSON.parse(userInformation) as User; 
         
         try
         {
@@ -36,7 +36,6 @@ const Contacts: React.FC<Props> = (navigation) => {
             console.log(err);
             Alert.alert('Ocorreu um erro inesperado. Por favor, tente novamente');
         }
-
     };
 
     return (
