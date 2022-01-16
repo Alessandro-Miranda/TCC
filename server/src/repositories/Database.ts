@@ -4,13 +4,14 @@ import {
     CollectionReference,
     doc,
     DocumentData,
+    getDoc,
     getDocs,
     query, setDoc, where
 } from "firebase/firestore";
 import { firestoreApp } from "../config/firebaseConfig";
 import { IDatabaseRepositorie } from "../interfaces/IDatabaseRepository";
 import { Contacts } from "../types/Contacts";
-import { MessageBody, MessageState } from "../types/Message";
+import { MessageBody, MessageState, Preview } from "../types/Message";
 import { User } from "../types/User";
 
 export class Database implements IDatabaseRepositorie
@@ -124,5 +125,53 @@ export class Database implements IDatabaseRepositorie
         });
         
         return response;    
+    }
+
+    async getMessages(email: string): Promise<Preview[] | []>
+    {
+        const chatCollection = collection(firestoreApp, 'chats');
+        const querySnapshot = await getDocs(chatCollection);
+        const chats: { chatID: string, contactEmail: string}[] = [];
+
+        querySnapshot.forEach(doc => {
+            const users = Object.keys(doc.data().users);
+
+            if(users.includes(email))
+            {
+                chats.push({
+                    chatID: doc.id,
+                    contactEmail: users.filter(user => user !== email)[0]
+                });
+            }
+        });
+
+        if(!chats.length)
+        {
+            return [];
+        }
+
+        const chatsInfo: Preview[] = [];
+        
+        for(const chat of chats)
+        {
+            const docRef = doc(firestoreApp, 'chats', chat.chatID, 'mensagens', 'mensagem');
+            const contactName = await this.findUserByEmail(chat.contactEmail);
+            const docSnapshoot = await getDoc(docRef);
+
+            if(docSnapshoot.exists())
+            {
+                const allMessages = docSnapshoot.data() as { mensagem: MessageBody[]};
+                const lastMessage = allMessages.mensagem.pop() as MessageBody;
+
+                chatsInfo.push({
+                    chatID: chat.chatID,
+                    contactName: `${contactName.first_name} ${contactName.last_name}`,
+                    messagePreview: lastMessage.message,
+                    photo: '',
+                    time: lastMessage.timestamp
+                });
+            }
+        }
+        return chatsInfo;
     }
 }
