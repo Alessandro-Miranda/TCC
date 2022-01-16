@@ -16,7 +16,8 @@ export const styles = StyleSheet.create({
         bottom: 0,
         paddingHorizontal: 20,
         marginBottom: 20,
-        width: '100%'
+        width: '100%',
+        backgroundColor: colors.primary,
     },
     messageInput: {
         borderStyle: 'solid',
