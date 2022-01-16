@@ -7,6 +7,8 @@ messagesRouter.get("/contacts/:email", (req, res) => new MessageController().get
 
 messagesRouter.get("/contacts/:email/:department", (req, res) => new MessageController().getContactsBySameDepartment(req, res));
 
+messagesRouter.get('/get-messages/:email', (req, res) => new MessageController().getMessages(req, res));
+
 messagesRouter.post("/create-chat", (req, res) => new MessageController().createChat(req, res));
 
 messagesRouter.post("/send", (req, res) => new MessageController().sendMessage(req, res));
