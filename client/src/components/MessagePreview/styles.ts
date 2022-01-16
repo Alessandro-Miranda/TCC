@@ -21,16 +21,26 @@ export const styles = StyleSheet.create({
         borderRadius: 50
     },
     contactNameAndMessage: {
-        paddingLeft: 20
+        paddingLeft: 20,
     },
     contactName: {
         fontSize: 22,
         fontWeight: 'bold',
         color: colors.secundary,
-        letterSpacing: 2
+        letterSpacing: 2,
+        textTransform: 'capitalize'
+    },
+    messagePreviewContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
     },
     messagePreview: {
         fontSize: 16,
-        color: colors.fontColor
+        color: colors.fontColor,
+        width: '75%'
     },
+    messageTime: {
+        color: colors.fontColor
+    }
 })
