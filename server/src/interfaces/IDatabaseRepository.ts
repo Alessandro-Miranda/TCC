@@ -1,6 +1,6 @@
 import { CollectionReference, DocumentData } from "firebase/firestore";
 import { Contacts } from "../types/Contacts";
-import { MessageBody } from "../types/Message";
+import { MessageBody, Preview } from "../types/Message";
 import { User } from "../types/User";
 
 export interface IDatabaseRepositorie
@@ -11,5 +11,6 @@ export interface IDatabaseRepositorie
     findAllContacts(username: string): Promise<Contacts[]>;
     createChat(userEmail: string, contactEmail: string, uniqueChatId: string): Promise<Boolean>;
     addContact(userEmail: string, contactEmail: string, contactId: string, chatId: string): Promise<Boolean>;
-    sendMessage(message: MessageBody): Promise<Boolean>
+    sendMessage(message: MessageBody): Promise<Boolean>;
+    getMessages(email: string): Promise<Preview[] | []>;
 }
