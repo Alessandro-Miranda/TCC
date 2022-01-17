@@ -9,7 +9,7 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { io, Socket } from 'socket.io-client';
 import MessagePreview from '../../components/MessagePreview';
-import { BASE_URL } from '../../constants';
+import { BASE_URL, NEW_CHAT } from '../../constants';
 import { api } from '../../services/api';
 import { Preview } from '../../types/Messages';
 import { RootStackParamList } from '../../types/RootStackParamList';
@@ -29,6 +29,8 @@ const Home: React.FC<Props> = ({ navigation }) => {
         bootstrapAsync();
 
         const socket = io(BASE_URL);
+        
+        socket.emit(NEW_CHAT);
 
         setSocket(socket);
 
@@ -39,7 +41,7 @@ const Home: React.FC<Props> = ({ navigation }) => {
         }
     }, []);
 
-    socket?.on('', (data: Preview[]) => {
+    socket?.on(NEW_CHAT, (data: Preview[]) => {
         setMessages(data);
     });
 
