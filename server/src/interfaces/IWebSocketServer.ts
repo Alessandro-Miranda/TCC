@@ -5,5 +5,4 @@ export interface IWebSocketServer
 {
     listen(): void;
     connected(socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>): void;
-    getAllMessages(userEmail: string): void;
 }
