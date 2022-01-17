@@ -75,7 +75,7 @@ export class WebSocketServer implements IWebSocketServer
     
     static disconnect(reason: SocketDisconnectReason): void
     {
-        console.log('User disconnected');
+        console.log('User disconnected. Reason: ', reason);
         this.newMessageUnsub();
         this.newChatUnsub();
     }
