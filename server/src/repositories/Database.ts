@@ -6,7 +6,7 @@ import {
     DocumentData,
     getDoc,
     getDocs,
-    query, setDoc, where
+    query, QuerySnapshot, setDoc, where
 } from "firebase/firestore";
 import { firestoreApp } from "../config/firebaseConfig";
 import { IDatabaseRepositorie } from "../interfaces/IDatabaseRepository";
@@ -131,9 +131,18 @@ export class Database implements IDatabaseRepositorie
     {
         const chatCollection = collection(firestoreApp, 'chats');
         const querySnapshot = await getDocs(chatCollection);
-        const chats: { chatID: string, contactEmail: string}[] = [];
 
-        querySnapshot.forEach(doc => {
+        const messagePreview = await this.getMessagePreview(querySnapshot, email);
+
+        return messagePreview;
+    }
+
+    async getMessagePreview(snapshot: QuerySnapshot<DocumentData>, email: string): Promise<Preview[] | []>
+    {
+        const chats: { chatID: string, contactEmail: string }[] = [];
+        const chatsInfo: Preview[] = [];
+
+        snapshot.forEach(doc => {
             const users = Object.keys(doc.data().users);
 
             if(users.includes(email))
@@ -149,8 +158,6 @@ export class Database implements IDatabaseRepositorie
         {
             return [];
         }
-
-        const chatsInfo: Preview[] = [];
         
         for(const chat of chats)
         {
@@ -176,6 +183,7 @@ export class Database implements IDatabaseRepositorie
                 });
             }
         }
+
         return chatsInfo;
     }
 }
