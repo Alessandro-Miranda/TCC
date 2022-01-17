@@ -19,6 +19,7 @@ A aplicação criada possibilitará a troca de mensagens de forma instantânea u
 - [x] Armazenamento de mensagens em banco de dados
 
 ## To-do
+
 - [ ] Sistema de adminstração para cadastro de usuários
 - [x] Tela de login dos usuários
 - [x] Interface da tela inicial
