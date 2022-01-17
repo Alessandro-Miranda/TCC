@@ -3,3 +3,7 @@ export const CONNECTION = 'connection';
 export const DISCONNECT = 'disconnect';
 export const NEW_MESSAGE = 'new message';
 // End of Socket.io events
+
+// Base URL
+export const BASE_URL = 'http://192.168.19.130:4000/';
+// End of base url
