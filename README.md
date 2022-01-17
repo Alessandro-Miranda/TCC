@@ -15,16 +15,16 @@ A aplicação criada possibilitará a troca de mensagens de forma instantânea u
 ## Funcionalidades
 
 - [ ] Cadastro de usuários
-- [ ] Troca de mensagens em tempo real
-- [ ] Armazenamento de mensagens em banco de dados
+- [x] Troca de mensagens em tempo real
+- [x] Armazenamento de mensagens em banco de dados
 
 ## To-do
 - [ ] Sistema de adminstração para cadastro de usuários
 - [x] Tela de login dos usuários
 - [x] Interface da tela inicial
 - [x] Interface da tela de mensagens
-- [ ] Criação do servidor
-- [ ] Conexão do servidor com o cliente
+- [x] Criação do servidor
+- [x] Conexão do servidor com o cliente
 
 ## Pré-requisitos
 
