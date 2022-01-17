@@ -5,7 +5,7 @@ import {
     Text,
     View
 } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { io, Socket } from 'socket.io-client';
 import MessagePreview from '../../components/MessagePreview';
@@ -38,6 +38,10 @@ const Home: React.FC<Props> = ({ navigation }) => {
             socket.disconnect();
         }
     }, []);
+
+    socket?.on('', (data: Preview[]) => {
+        setMessages(data);
+    });
 
     const asyncGetMessages= async () => {
         const userInfo = await getInformationsFromStorage('user');
@@ -75,7 +79,7 @@ const Home: React.FC<Props> = ({ navigation }) => {
     }
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             {
                 messages
                 ? (
@@ -93,7 +97,7 @@ const Home: React.FC<Props> = ({ navigation }) => {
                     />
                 </TouchableOpacity>
             </View>    
-        </View>
+        </ScrollView>
     );
 }
 
