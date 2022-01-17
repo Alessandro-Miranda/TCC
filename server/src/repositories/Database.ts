@@ -175,8 +175,8 @@ export class Database implements IDatabaseRepositorie
                         department: contactInfos.department,
                         chatID: chat.chatID,
                         email: contactInfos.email,
-                        first_name: contactInfos.first_name,
-                        last_name: contactInfos.last_name
+                        firstName: contactInfos.firstName,
+                        lastName: contactInfos.lastName
                     },
                     messagePreview: lastMessage.message,
                     timestamp: lastMessage.timestamp
