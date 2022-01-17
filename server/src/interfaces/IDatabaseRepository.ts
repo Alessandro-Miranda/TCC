@@ -1,4 +1,4 @@
-import { CollectionReference, DocumentData } from "firebase/firestore";
+import { CollectionReference, DocumentData, QuerySnapshot } from "firebase/firestore";
 import { Contacts } from "../types/Contacts";
 import { MessageBody, Preview } from "../types/Message";
 import { User } from "../types/User";
@@ -13,4 +13,5 @@ export interface IDatabaseRepositorie
     addContact(userEmail: string, contactEmail: string, contactId: string, chatId: string): Promise<Boolean>;
     sendMessage(message: MessageBody): Promise<Boolean>;
     getMessages(email: string): Promise<Preview[] | []>;
+    getMessagePreview(snapshoot: QuerySnapshot<DocumentData>, email: string): Promise<Preview[] | []>
 }
