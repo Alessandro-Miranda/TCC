@@ -98,9 +98,24 @@ first_name      | String    | Primeiro nome do usuário
 last_name       | String    | Último nome do usuário
 email           | String    | E-mail cadastrado do usuário
 
+### Pré-visualização das mensagens
+
+Todos as pré-visualizações das mensagens são identificadas pelo **chatID** e possuem as seguintes propriedades:
+
+campo           | Tipo        | Descrição
+----------------|-------------|-----------
+messagePreview  | string      | A última mensagem do chat
+timestamp       | integer     | Horário da mensagem
+contact         | object      | Informações do contato e chat
+chatID          | string      | Identificador do chat
+department      | string      | Departamento do contato
+email           | string      | E-mail do contato
+firstName       | string      | Primeiro nome do contato
+lastName        | string      | Último nome do usuário
+
 ### Exemplo de retorno
 
-Ao solicitar os contatos na rota /messages/contacts passando o usuário e departamento (Ex.: _/messages/contacts/useremail@emal.com/rh_), o retorno será como o exemplo abaixo
+Ao solicitar os contatos na rota /messages/contacts/:email passando o usuário e departamento (Ex.: _/messages/contacts/useremail@emal.com_), o retorno será como o exemplo abaixo
 
 ```json
 [
@@ -128,8 +143,6 @@ Ao solicitar os contatos na rota /messages/contacts passando o usuário e depart
 ]
 ```
 
-_**Obs**.: O retorno quando ocultado o parâmetro do departamento também é igual ao exemplo acima
-
 Quando solicitado a autenticação do usuário, haverá o seguinte retorno
 
 ```json
@@ -145,6 +158,24 @@ Quando solicitado a autenticação do usuário, haverá o seguinte retorno
 }
 ```
 
+A solicitação da prévia das mensagens será a seguinte
+
+```json
+[
+  {
+    "messagePreview": "uma mensagem que alguém enviou",
+    "timestamp": 102654898,
+    "contact": {
+      "chatID": "1234asd-ad15s-sd25d1-5s4d5a",
+      "department": "TI",
+      "email": "email@email.com",
+      "firstName": "nome",
+      "lastName": "last name"
+    }
+  }
+]
+```
+
 ## Tecnologias e Ferramentas
 
 - [React-Native](https://reactnative.dev/)
@@ -153,8 +184,8 @@ Quando solicitado a autenticação do usuário, haverá o seguinte retorno
 - [TypeScript](https://www.typescriptlang.org/)
 - [NodeJs](https://nodejs.org/)
 - [Express](https://expressjs.com/pt-br/)
-- [Insomnia](https://insomnia.rest/download)
 - [Firebase](https://firebase.google.com/?hl=pt)
+- [Insomnia](https://insomnia.rest/download)
 
 ## Licença
 
