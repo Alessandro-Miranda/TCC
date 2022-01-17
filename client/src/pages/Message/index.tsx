@@ -53,10 +53,8 @@ const Message: React.FC <Props> = ({ navigation }) => {
     });
 
     const onScrollToBottom = () => {
-        const teste = scrollViewRef.current?.defaultProps?.contentOffset;
-        console.log(teste);
-        // scrollViewRef.current?.scrollToEnd();
-    }
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+    };
 
     const asyncBootstrap = async () => {
         const user = await getInformationsFromStorage('user');
@@ -163,7 +161,6 @@ const Message: React.FC <Props> = ({ navigation }) => {
         <View style={styles.messageContainer}>
             <ScrollView
                 ref={scrollViewRef}
-                onScroll={onScrollToBottom}
                 onContentSizeChange={onScrollToBottom}
                 style={styles.messageWrapper}
             >
