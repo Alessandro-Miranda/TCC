@@ -9,6 +9,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { io, Socket } from 'socket.io-client';
 import MessagePreview from '../../components/MessagePreview';
+import { BASE_URL } from '../../constants';
 import { api } from '../../services/api';
 import { Preview } from '../../types/Messages';
 import { RootStackParamList } from '../../types/RootStackParamList';
@@ -27,7 +28,7 @@ const Home: React.FC<Props> = ({ navigation }) => {
     useEffect(() => {
         bootstrapAsync();
 
-        const socket = io("http://192.168.1.2:4000/");
+        const socket = io(BASE_URL);
 
         setSocket(socket);
 
