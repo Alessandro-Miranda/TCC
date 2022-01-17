@@ -20,6 +20,6 @@ const firestore = initializeApp({
     databaseURL: DATABASE_URL,
     messagingSenderId: MESSAGIN_SENDER_ID,
     appId: APP_ID
-})
+});
 
 export const firestoreApp = getFirestore(firestore);
