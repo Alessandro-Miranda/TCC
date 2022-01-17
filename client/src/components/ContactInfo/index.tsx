@@ -51,7 +51,7 @@ export const ContactInfos: React.FC<Infos> = ({ contact, index, navigation }) =>
                     style={styles.profileImage} />
                 <View>
                     <Text style={styles.contactName}>
-                        {contact.first_name} {contact.last_name}
+                        {contact.firstName} {contact.lastName}
                     </Text>
                     <Text style={styles.contactDepartment}>
                         {changeTextToUppercase(contact.department)}

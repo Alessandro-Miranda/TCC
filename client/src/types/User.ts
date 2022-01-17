@@ -1,17 +1,17 @@
 export type Contact = {
     department: string;
     email: string;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     image?: string;
     chatID: string;
 }
 
 export type User = {
-    first_name: string;
+    firstName: string;
     department: string;
     email: string;
-    last_name: string;
+    lastName: string;
     password: string;
     admin: boolean;
 }

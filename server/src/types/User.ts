@@ -1,8 +1,8 @@
 export type User = {
-    first_name: string;
+    firstName: string;
     department: string;
     email: string;
-    last_name: string;
+    lastName: string;
     password: string;
     admin: boolean;
 }

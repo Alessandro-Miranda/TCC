@@ -49,7 +49,7 @@ const MessagePreview: React.FC<Props> = ({ messages, navigation }) => {
                         />
                         <View style={styles.contactNameAndMessage}>
                             <Text style={styles.contactName}>
-                                {`${item.contact.first_name} ${item.contact.last_name}`}
+                                {`${item.contact.firstName} ${item.contact.lastName}`}
                             </Text>
                             <View style={styles.messagePreviewContainer}>
                                 <Text style={styles.messagePreview}>

@@ -16,8 +16,8 @@ const MessageHeader: React.FC<Props> = ({ navigation }) => {
     }
 
     const renderContactName = () => {
-        const { first_name, last_name, department } = navigation.state.params?.contact as Contact;
-        const formatedName = cappitalizeOrchangeTextToUppercase(`${first_name} ${last_name}`);
+        const { firstName, lastName, department } = navigation.state.params?.contact as Contact;
+        const formatedName = cappitalizeOrchangeTextToUppercase(`${firstName} ${lastName}`);
         return `${formatedName} (${cappitalizeOrchangeTextToUppercase(department)})`;
     }
 
