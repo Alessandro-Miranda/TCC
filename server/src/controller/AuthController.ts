@@ -44,6 +44,8 @@ export class AuthController
                 .status(401)
                 .setHeader('WWW-Authenticate', 'Unauthorized')
                 .send({ auth: false });
+
+            return;
         }
 
         if(this.model.verifyJWT(token as string))
