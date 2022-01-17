@@ -21,7 +21,7 @@ export class AuthController
         const { email, password } = req.body as ReqBodyAuth;
         const response = await this.model.checkUser(email, password);
 
-        if(response ===  USER_NOT_FOUND || response === INVALID_PASSWORD)
+        if(response === USER_NOT_FOUND || response === INVALID_PASSWORD)
         {
             res
                 .status(401)
