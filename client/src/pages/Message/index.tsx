@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Alert, Image, NativeSyntheticEvent, TextInput, TextInputChangeEventData, View } from "react-native";
 import { ScrollView, TouchableHighlight } from "react-native-gesture-handler";
 import 'react-native-get-random-values';
@@ -6,7 +6,7 @@ import { NavigationStackScreenProps } from "react-navigation-stack";
 import { io, Socket } from "socket.io-client";
 import { v4 as uuidv4 } from 'uuid';
 import MessagesText from "../../components/MessagesText";
-import { NEW_MESSAGE } from "../../constants";
+import { BASE_URL, NEW_MESSAGE } from "../../constants";
 import { api } from "../../services/api";
 import { MessageBody, MessageState } from "../../types/Messages";
 import { RootStackParamList } from "../../types/RootStackParamList";
@@ -24,9 +24,11 @@ const Message: React.FC <Props> = ({ navigation }) => {
     const [ chatInfos, setChatInfos ] = useState({} as Contact);
     const [ socket, setSocket ] = useState<Socket>();
     
+    const scrollViewRef = useRef<ScrollView>(null);
+    
     useEffect(() => {
         asyncBootstrap();
-        const socket = io("http://192.168.1.2:4000/");
+        const socket = io(BASE_URL);
         
         setSocket(socket);
         
@@ -49,6 +51,12 @@ const Message: React.FC <Props> = ({ navigation }) => {
         
         setAllMessages(data);
     });
+
+    const onScrollToBottom = () => {
+        const teste = scrollViewRef.current?.defaultProps?.contentOffset;
+        console.log(teste);
+        // scrollViewRef.current?.scrollToEnd();
+    }
 
     const asyncBootstrap = async () => {
         const user = await getInformationsFromStorage('user');
@@ -154,6 +162,9 @@ const Message: React.FC <Props> = ({ navigation }) => {
     return (
         <View style={styles.messageContainer}>
             <ScrollView
+                ref={scrollViewRef}
+                onScroll={onScrollToBottom}
+                onContentSizeChange={onScrollToBottom}
                 style={styles.messageWrapper}
             >
                 {
