@@ -15,4 +15,6 @@ export const NEW_CHAT = 'new chat';
 export const USERS = 'usuarios';
 export const CONTACTS = 'contatos';
 export const CHATS = 'chats';
+export const MESSAGES = 'mensagens';
+export const MESSAGE = 'mensagem';
 // End of Firebase collection names
