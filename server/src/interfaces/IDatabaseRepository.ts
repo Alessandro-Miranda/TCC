@@ -15,4 +15,5 @@ export interface IDatabaseRepositorie
     getMessages(email: string): Promise<Preview[] | []>;
     getMessagePreview(snapshoot: QuerySnapshot<DocumentData>, email: string): Promise<Preview[] | []>;
     addNewUser(userInfos: User): Promise<boolean>;
+    updateUser(userEmail: string, newInfos: User): Promise<boolean>;
 }
