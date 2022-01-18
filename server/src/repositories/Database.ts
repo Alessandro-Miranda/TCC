@@ -6,10 +6,15 @@ import {
     DocumentData,
     getDoc,
     getDocs,
-    query, QuerySnapshot, setDoc, where
+    query,
+    QuerySnapshot,
+    setDoc,
+    updateDoc,
+    where
 } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid';
 import { firestoreApp } from "../config/firebaseConfig";
+import { CHATS, CONTACTS, USERS } from "../constants";
 import { IDatabaseRepositorie } from "../interfaces/IDatabaseRepository";
 import { Contacts } from "../types/Contacts";
 import { MessageBody, MessageState, Preview } from "../types/Message";
@@ -60,7 +65,7 @@ export class Database implements IDatabaseRepositorie
     async findAllContacts(email: string): Promise<Contacts[]>
     {
         // Obtém a subcoleção de contatos o formato final representa o path {raiz}/usuarios/{email}/contatos
-        const contactsCollection = collection(firestoreApp, 'usuarios', email, 'contatos');
+        const contactsCollection = collection(firestoreApp, USERS, email, CONTACTS);
         const contactsDoc = await getDocs(query(contactsCollection));
         
         return contactsDoc.docs.map(doc => doc.data() as Contacts);
@@ -68,7 +73,7 @@ export class Database implements IDatabaseRepositorie
 
     async createChat(userEmail: string, contactEmail: string, uniqueChatId: string): Promise<Boolean>
     {
-        const chatRef = doc(firestoreApp, 'chats', uniqueChatId);
+        const chatRef = doc(firestoreApp, CHATS, uniqueChatId);
         const chatInfo = {
             users: {}
         }
@@ -99,7 +104,7 @@ export class Database implements IDatabaseRepositorie
     async addContact(userEmail: string, contactEmail: string, contactId: string, chatId: string): Promise<Boolean>
     {
         const contactInfo = await this.findUserByEmail(contactEmail);
-        const contactRef = doc(firestoreApp, 'usuarios', userEmail, 'contatos', contactId);
+        const contactRef = doc(firestoreApp, USERS, userEmail, CONTACTS, contactId);
         const infosToSave = {
             ...contactInfo,
             chatID: chatId
@@ -111,7 +116,7 @@ export class Database implements IDatabaseRepositorie
 
     async addNewUser(userInfos: User): Promise<boolean>
     {
-        const userRef = doc(firestoreApp, 'usuarios', userInfos.email);
+        const userRef = doc(firestoreApp, USERS, userInfos.email);
 
         const createNewUserResponse = setDoc(userRef, userInfos).then(() => true).catch(() => false);
 
@@ -134,6 +139,15 @@ export class Database implements IDatabaseRepositorie
         }
         
         return true;    
+    }
+
+    async updateUser(userEmail: string, newInfos: User): Promise<boolean>
+    {
+        const userRef = doc(firestoreApp, USERS, userEmail);
+
+        const updateResponse = updateDoc(userRef, newInfos).then(() => true).catch(() => false);
+
+        return updateResponse;
     }
 
     async sendMessage(message: MessageBody): Promise<Boolean>
