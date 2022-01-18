@@ -1,7 +1,6 @@
 import { sign, verify } from 'jsonwebtoken';
 import {
     INVALID_PASSWORD,
-    USERS_COLLECTION_NAME,
     USER_NOT_FOUND
 } from '../constants';
 import { Database } from '../repositories/Database';
@@ -14,7 +13,7 @@ export class AuthModel
     
     constructor()
     {
-        this.database = new Database(USERS_COLLECTION_NAME);
+        this.database = new Database();
     }
 
     async checkUser(email: string, pwd: string)
