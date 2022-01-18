@@ -22,14 +22,6 @@ import { User } from "../types/User";
 
 export class Database implements IDatabaseRepositorie
 {
-    private collectionRef;
-
-    constructor(collectionName: string)
-    {
-        // coleção de usuários
-        this.collectionRef = this.getRef(collectionName);
-    }
-
     getRef(collectionName: string): CollectionReference<DocumentData>
     {
         return collection(firestoreApp, collectionName);    
@@ -37,7 +29,7 @@ export class Database implements IDatabaseRepositorie
 
     async findUserByEmail(email: string): Promise<User>
     {
-        const queryToExecute = query(this.collectionRef, where('email', '==', email));
+        const queryToExecute = query(this.getRef(USERS), where('email', '==', email));
         
         const querySnapshot = await getDocs(queryToExecute);
         let userFound = {} as User;
@@ -51,7 +43,7 @@ export class Database implements IDatabaseRepositorie
 
     async findAllUsersByDepartment(department: string): Promise<User[]>
     {
-        const queryToExecute = query(this.collectionRef, where('department', '==', department));
+        const queryToExecute = query(this.getRef(USERS), where('department', '==', department));
         const querySnapshot = await getDocs(queryToExecute);
         const users: User[] = [];
 
