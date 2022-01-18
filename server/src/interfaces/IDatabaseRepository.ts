@@ -13,5 +13,6 @@ export interface IDatabaseRepositorie
     addContact(userEmail: string, contactEmail: string, contactId: string, chatId: string): Promise<Boolean>;
     sendMessage(message: MessageBody): Promise<Boolean>;
     getMessages(email: string): Promise<Preview[] | []>;
-    getMessagePreview(snapshoot: QuerySnapshot<DocumentData>, email: string): Promise<Preview[] | []>
+    getMessagePreview(snapshoot: QuerySnapshot<DocumentData>, email: string): Promise<Preview[] | []>;
+    addNewUser(userInfos: User): Promise<boolean>;
 }
