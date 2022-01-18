@@ -8,6 +8,7 @@ import {
     getDocs,
     query, QuerySnapshot, setDoc, where
 } from "firebase/firestore";
+import { v4 as uuidv4 } from 'uuid';
 import { firestoreApp } from "../config/firebaseConfig";
 import { IDatabaseRepositorie } from "../interfaces/IDatabaseRepository";
 import { Contacts } from "../types/Contacts";
@@ -20,6 +21,7 @@ export class Database implements IDatabaseRepositorie
 
     constructor(collectionName: string)
     {
+        // coleção de usuários
         this.collectionRef = this.getRef(collectionName);
     }
 
@@ -102,13 +104,36 @@ export class Database implements IDatabaseRepositorie
             ...contactInfo,
             chatID: chatId
         }
-        const response = setDoc(contactRef, infosToSave).then(() => {
-            return true;
-        }).catch(() => {
-            return false;
-        });
+        const response = setDoc(contactRef, infosToSave).then(() => true).catch(() => false);
 
         return response;    
+    }
+
+    async addNewUser(userInfos: User): Promise<boolean>
+    {
+        const userRef = doc(firestoreApp, 'usuarios', userInfos.email);
+
+        const createNewUserResponse = setDoc(userRef, userInfos).then(() => true).catch(() => false);
+
+        if(!createNewUserResponse)
+        {
+            return false;
+        }
+
+        const contactsFromSameDepartment = await this.findAllUsersByDepartment(userInfos.department);
+
+        for(const contact of contactsFromSameDepartment)
+        {
+            const chatID = uuidv4();
+            
+            // Adiciona os usuários do mesmo setor aos contatos do novo usuário
+            await this.addContact(userInfos.email, contact.email, uuidv4(), chatID);
+            
+            // Adiciona o usuário ao contato dos usuários do setor já existentes
+            await this.addContact(contact.email, userInfos.email, uuidv4(), chatID);
+        }
+        
+        return true;    
     }
 
     async sendMessage(message: MessageBody): Promise<Boolean>
