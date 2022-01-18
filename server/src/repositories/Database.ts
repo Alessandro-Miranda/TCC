@@ -4,6 +4,8 @@ import {
     CollectionReference,
     doc,
     DocumentData,
+    DocumentReference,
+    FieldPath,
     getDoc,
     getDocs,
     query,
@@ -14,7 +16,7 @@ import {
 } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid';
 import { firestoreApp } from "../config/firebaseConfig";
-import { CHATS, CONTACTS, USERS } from "../constants";
+import { CHATS, CONTACTS, MESSAGE, MESSAGES, USERS } from "../constants";
 import { IDatabaseRepositorie } from "../interfaces/IDatabaseRepository";
 import { Contacts } from "../types/Contacts";
 import { MessageBody, MessageState, Preview } from "../types/Message";
@@ -22,11 +24,18 @@ import { User } from "../types/User";
 
 export class Database implements IDatabaseRepositorie
 {
-    getCollectionRef(collectionName: string | string[]): CollectionReference<DocumentData>
+    getCollectionRef(collectionPath: string | string[]): CollectionReference<DocumentData>
     {
-        const collectionPath = Array.isArray(collectionName) ? collectionName.join('/') : collectionName;
+        const slashSeparetedPath = Array.isArray(collectionPath) ? collectionPath.join('/') : collectionPath;
 
-        return collection(firestoreApp, collectionPath);    
+        return collection(firestoreApp, slashSeparetedPath);    
+    }
+
+    getDoc(docPath: string | string[]): DocumentReference<DocumentData>
+    {
+        const slashSeparetedDocPath = Array.isArray(docPath) ? docPath.join('/') : docPath;
+
+        return doc(firestoreApp, slashSeparetedDocPath);
     }
 
     async findUserByEmail(email: string): Promise<User>
@@ -58,7 +67,7 @@ export class Database implements IDatabaseRepositorie
 
     async findAllContacts(email: string): Promise<Contacts[]>
     {
-        const contactsCollection = this.getCollectionRef([USERS, 'email', CONTACTS]);
+        const contactsCollection = this.getCollectionRef([USERS, email, CONTACTS]);
         const contactsDoc = await getDocs(query(contactsCollection));
         
         return contactsDoc.docs.map(doc => doc.data() as Contacts);
@@ -66,7 +75,7 @@ export class Database implements IDatabaseRepositorie
 
     async createChat(userEmail: string, contactEmail: string, uniqueChatId: string): Promise<Boolean>
     {
-        const chatRef = doc(firestoreApp, CHATS, uniqueChatId);
+        const chatRef = this.getDoc([CHATS, uniqueChatId]);
         const chatInfo = {
             users: {}
         }
@@ -85,11 +94,7 @@ export class Database implements IDatabaseRepositorie
             value: true
         });
         
-        const response = setDoc(chatRef, chatInfo).then(() => {
-            return true;
-        }).catch(() => {
-            return false;
-        })
+        const response = await this.setDocuments(chatRef, chatInfo);
 
         return response;
     }
@@ -97,21 +102,22 @@ export class Database implements IDatabaseRepositorie
     async addContact(userEmail: string, contactEmail: string, contactId: string, chatId: string): Promise<Boolean>
     {
         const contactInfo = await this.findUserByEmail(contactEmail);
-        const contactRef = doc(firestoreApp, USERS, userEmail, CONTACTS, contactId);
+        const contactRef = this.getDoc([USERS, userEmail, CONTACTS, contactId]);
         const infosToSave = {
             ...contactInfo,
             chatID: chatId
         }
-        const response = setDoc(contactRef, infosToSave).then(() => true).catch(() => false);
+
+        const response = await this.setDocuments(contactRef, infosToSave);
 
         return response;    
     }
 
     async addNewUser(userInfos: User): Promise<boolean>
     {
-        const userRef = doc(firestoreApp, USERS, userInfos.email);
+        const userRef = this.getDoc([USERS, userInfos.email]);
 
-        const createNewUserResponse = setDoc(userRef, userInfos).then(() => true).catch(() => false);
+        const createNewUserResponse = await this.setDocuments(userRef, userInfos);
 
         if(!createNewUserResponse)
         {
@@ -136,7 +142,7 @@ export class Database implements IDatabaseRepositorie
 
     async updateUser(userEmail: string, newInfos: User): Promise<boolean>
     {
-        const userRef = doc(firestoreApp, USERS, userEmail);
+        const userRef = this.getDoc([USERS, userEmail]);
 
         const updateResponse = updateDoc(userRef, newInfos).then(() => true).catch(() => false);
 
@@ -145,18 +151,30 @@ export class Database implements IDatabaseRepositorie
 
     async sendMessage(message: MessageBody): Promise<Boolean>
     {
-        const chatMessage = doc(firestoreApp, 'chats', message.chatID, 'mensagens', 'mensagem');
+        const chatMessage = this.getDoc([CHATS, message.chatID, MESSAGES, MESSAGE]);
         const messageInfo = {
             ...message,
             state: MessageState.Sent
         }
-        const response = setDoc(chatMessage, { mensagem: arrayUnion(messageInfo) }, { merge: true }).then(() => {
-            return true;
-        }).catch(() => {
-            return false;
-        });
+        
+        const response = await this.setDocuments(chatMessage, { mensagem: arrayUnion(messageInfo)}, true);
         
         return response;    
+    }
+
+    private async setDocuments(
+        documentReference: DocumentReference<DocumentData>,
+        data: any,
+        merge?: boolean | undefined,
+        mergeFields?: (string | FieldPath)[] | undefined
+    )
+    {
+        const options = {
+            merge: merge ? merge : false,
+            mergeFields
+        };
+
+        return setDoc(documentReference, data, options).then(() => true).catch(() => false);
     }
 
     async getMessages(email: string): Promise<Preview[] | []>
