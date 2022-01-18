@@ -170,7 +170,7 @@ export class Database implements IDatabaseRepositorie
     )
     {
         const options = {
-            merge: merge ? merge : false,
+            merge: merge || false,
             mergeFields
         };
 
@@ -210,7 +210,7 @@ export class Database implements IDatabaseRepositorie
         
         for(const chat of chats)
         {
-            const docRef = doc(firestoreApp, 'chats', chat.chatID, 'mensagens', 'mensagem');
+            const docRef = this.getDoc([CHATS, chat.chatID, MESSAGES, MESSAGE]);
             const contactInfos = await this.findUserByEmail(chat.contactEmail);
             const docSnapshoot = await getDoc(docRef);
 
