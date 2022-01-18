@@ -22,14 +22,16 @@ import { User } from "../types/User";
 
 export class Database implements IDatabaseRepositorie
 {
-    getRef(collectionName: string): CollectionReference<DocumentData>
+    getCollectionRef(collectionName: string | string[]): CollectionReference<DocumentData>
     {
-        return collection(firestoreApp, collectionName);    
+        const collectionPath = Array.isArray(collectionName) ? collectionName.join('/') : collectionName;
+
+        return collection(firestoreApp, collectionPath);    
     }
 
     async findUserByEmail(email: string): Promise<User>
     {
-        const queryToExecute = query(this.getRef(USERS), where('email', '==', email));
+        const queryToExecute = query(this.getCollectionRef(USERS), where('email', '==', email));
         
         const querySnapshot = await getDocs(queryToExecute);
         let userFound = {} as User;
@@ -43,7 +45,7 @@ export class Database implements IDatabaseRepositorie
 
     async findAllUsersByDepartment(department: string): Promise<User[]>
     {
-        const queryToExecute = query(this.getRef(USERS), where('department', '==', department));
+        const queryToExecute = query(this.getCollectionRef(USERS), where('department', '==', department));
         const querySnapshot = await getDocs(queryToExecute);
         const users: User[] = [];
 
@@ -56,8 +58,7 @@ export class Database implements IDatabaseRepositorie
 
     async findAllContacts(email: string): Promise<Contacts[]>
     {
-        // Obtém a subcoleção de contatos o formato final representa o path {raiz}/usuarios/{email}/contatos
-        const contactsCollection = collection(firestoreApp, USERS, email, CONTACTS);
+        const contactsCollection = this.getCollectionRef([USERS, 'email', CONTACTS]);
         const contactsDoc = await getDocs(query(contactsCollection));
         
         return contactsDoc.docs.map(doc => doc.data() as Contacts);
@@ -160,8 +161,7 @@ export class Database implements IDatabaseRepositorie
 
     async getMessages(email: string): Promise<Preview[] | []>
     {
-        const chatCollection = collection(firestoreApp, 'chats');
-        const querySnapshot = await getDocs(chatCollection);
+        const querySnapshot = await getDocs(this.getCollectionRef('chats'));
 
         const messagePreview = await this.getMessagePreview(querySnapshot, email);
 
