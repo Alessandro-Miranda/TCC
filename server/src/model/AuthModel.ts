@@ -3,7 +3,7 @@ import {
     INVALID_PASSWORD,
     USERS_COLLECTION_NAME,
     USER_NOT_FOUND
-} from '../constants/constants';
+} from '../constants';
 import { Database } from '../repositories/Database';
 import { User } from '../types/User';
 import { passwordValidate } from '../utils/passwordValidate';

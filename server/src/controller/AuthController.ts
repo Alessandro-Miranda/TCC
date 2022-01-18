@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { INVALID_PASSWORD, USER_NOT_FOUND } from "../constants/constants";
+import { INVALID_PASSWORD, USER_NOT_FOUND } from "../constants";
 import { AuthModel } from "../model/AuthModel";
 
 type ReqBodyAuth = {

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { USERS_COLLECTION_NAME } from "../constants/constants";
+import { USERS_COLLECTION_NAME } from "../constants";
 import { Database } from "../repositories/Database";
 import { Contacts } from "../types/Contacts";
 import { MessageBody } from '../types/Message';

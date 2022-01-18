@@ -3,7 +3,7 @@ import { collection, doc, onSnapshot, Unsubscribe } from 'firebase/firestore';
 import { createServer, Server } from 'http';
 import { Server as SocketIoServer, Socket } from 'socket.io';
 import { firestoreApp } from './config/firebaseConfig';
-import { CONNECTION, DISCONNECT, NEW_CHAT, NEW_MESSAGE, USERS_COLLECTION_NAME } from './constants/constants';
+import { CONNECTION, DISCONNECT, NEW_CHAT, NEW_MESSAGE, USERS_COLLECTION_NAME } from './constants';
 import { IWebSocketServer } from './interfaces/IWebSocketServer';
 import { Database } from './repositories/Database';
 import { MessageBody } from './types/Message';
