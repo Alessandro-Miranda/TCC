@@ -1,11 +1,12 @@
-import { CollectionReference, DocumentData, QuerySnapshot } from "firebase/firestore";
+import { CollectionReference, DocumentData, DocumentReference, QuerySnapshot } from "firebase/firestore";
 import { Contacts } from "../types/Contacts";
 import { MessageBody, Preview } from "../types/Message";
 import { User } from "../types/User";
 
 export interface IDatabaseRepositorie
 {
-    getCollectionRef(collectionName: string): CollectionReference<DocumentData>;
+    getCollectionRef(collectionPath: string | string[]): CollectionReference<DocumentData>;
+    getDoc(docPath: string | string[]): DocumentReference<DocumentData>;
     findUserByEmail(email: string): Promise<User>;
     findAllUsersByDepartment(department: string): Promise<User[]>;
     findAllContacts(username: string): Promise<Contacts[]>;
