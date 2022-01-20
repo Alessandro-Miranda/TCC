@@ -1,9 +1,16 @@
 import { Express } from 'express';
-import { collection, doc, onSnapshot, Unsubscribe } from 'firebase/firestore';
+import { onSnapshot, Unsubscribe } from 'firebase/firestore';
 import { createServer, Server } from 'http';
 import { Server as SocketIoServer, Socket } from 'socket.io';
-import { firestoreApp } from './config/firebaseConfig';
-import { CONNECTION, DISCONNECT, NEW_CHAT, NEW_MESSAGE, USERS_COLLECTION_NAME } from './constants';
+import {
+    CHATS,
+    CONNECTION,
+    DISCONNECT,
+    MESSAGE,
+    MESSAGES,
+    NEW_CHAT,
+    NEW_MESSAGE
+} from './constants';
 import { IWebSocketServer } from './interfaces/IWebSocketServer';
 import { Database } from './repositories/Database';
 import { MessageBody } from './types/Message';
@@ -52,7 +59,9 @@ export class WebSocketServer implements IWebSocketServer
 
     static newMessage(chatID: string, socket: Socket): void
     {
-        this.newMessageUnsub = onSnapshot(doc(firestoreApp, 'chats', chatID, 'mensagens', 'mensagem'), (doc) => {
+        const db = new Database();
+        
+        this.newMessageUnsub = onSnapshot(db.getDoc([CHATS, chatID, MESSAGES, MESSAGE]), (doc) => {
             if(doc.exists())
             {
                 const messages = doc.data() as NewMessages;
@@ -63,9 +72,9 @@ export class WebSocketServer implements IWebSocketServer
 
     static async newChat(userEmail: string, socket: Socket): Promise<void>
     {
-        const db = new Database(USERS_COLLECTION_NAME);
+        const db = new Database();
 
-        this.newChatUnsub = onSnapshot(collection(firestoreApp, 'chats'), async snapshoot => {
+        this.newChatUnsub = onSnapshot(db.getCollectionRef('chats'), async snapshoot => {
             
             const chatsInfo = await db.getMessagePreview(snapshoot, userEmail);
             
