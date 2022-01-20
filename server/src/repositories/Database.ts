@@ -110,7 +110,7 @@ export class Database implements IDatabaseRepositorie
 
         const response = await this.setDocuments(contactRef, infosToSave);
 
-        return response;    
+        return response;
     }
 
     async addNewUser(userInfos: User): Promise<boolean>
