@@ -1,5 +1,5 @@
 import { Express } from 'express';
-import { onSnapshot, Unsubscribe } from 'firebase/firestore';
+import { onSnapshot, query, Unsubscribe, where } from 'firebase/firestore';
 import { createServer, Server } from 'http';
 import { Server as SocketIoServer, Socket } from 'socket.io';
 import {
@@ -73,13 +73,19 @@ export class WebSocketServer implements IWebSocketServer
     static async newChat(userEmail: string, socket: Socket): Promise<void>
     {
         const db = new Database();
-
-        this.newChatUnsub = onSnapshot(db.getCollectionRef('chats'), async snapshoot => {
-            
+        const queryToExecute = query(db.getCollectionRef(CHATS), where('users', 'array-contains', userEmail));
+        
+        this.newChatUnsub = onSnapshot(queryToExecute, async snapshoot => {
             const chatsInfo = await db.getMessagePreview(snapshoot, userEmail);
             
             socket.emit(NEW_CHAT, chatsInfo);
-        })
+        });
+        // this.newChatUnsub = onSnapshot(db.getCollectionRef('chats'), async snapshoot => {
+        //     console.log('chegou coisa nova aqui hein');
+        //     const chatsInfo = await db.getMessagePreview(snapshoot, userEmail);
+            
+        //     socket.emit(NEW_CHAT, chatsInfo);
+        // });
     }
     
     static disconnect(reason: SocketDisconnectReason): void
