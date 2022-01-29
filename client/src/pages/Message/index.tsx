@@ -82,32 +82,38 @@ const Message: React.FC <Props> = ({ navigation }) => {
         
         setAllMessages(newMessage);
         
+        let chatID;
+
         if(!chatInfos.chatID)
         {
-            const wasCreated = await createChat();
+            const createChatStatus = await createChat();
 
-            if(!wasCreated)
+            if(!createChatStatus.isCreated)
             {
                 return;
             }
+
+            chatID = createChatStatus.chatID;
         }
 
-        await sendMessage(newMessage);
+        await sendMessage(newMessage, chatID);
     }
 
-    const sendMessage = async (messages: Message[]) => {
+    const sendMessage = async (messages: Message[], chatID: string | undefined) => {
         try
         {
             const lastMessage = messages[messages.length - 1] as Message;
             
             const messageToSend: MessageBody = {
-                chatID: chatInfos.chatID,
+                chatID: chatID || chatInfos.chatID,
                 ...lastMessage,
                 to: chatInfos.email
             };
             
             const { data } = await api.post<{ isSent: boolean, message: string }>("/messages/send", messageToSend);
-            socket?.emit(NEW_MESSAGE, 'teste');
+            
+            socket?.emit(NEW_MESSAGE, chatID || chatInfos.chatID);
+            
             if(!data.isSent)
             {
                 Alert.alert('Ocorreu um erro ao enviar a mensagem', "Por favor, tente novamente");
@@ -122,7 +128,10 @@ const Message: React.FC <Props> = ({ navigation }) => {
         }
     }
 
-    const createChat = async (): Promise<boolean> => {
+    const createChat = async (): Promise<{
+        isCreated: boolean,
+        chatID: string
+    }> => {
         try
         {
             const token = await getInformationsFromStorage('authToken');
@@ -136,24 +145,24 @@ const Message: React.FC <Props> = ({ navigation }) => {
                     'x-access-token': token?.replace(/"/g, '')
                 }
             });
-                    
+            
             setChatInfos({
                 ...chatInfos,
                 chatID: data.chatID
             });
-
-            navigation.setParams({
-                Message: {
-                    contact: { ...chatInfos }
-                }
-            });
             
-            return true;
+            return {
+                isCreated: true,
+                chatID: data.chatID
+            };
         }
         catch(err)
         {
             Alert.alert('Algo inesperado aconteceu por aqui :(', 'Um erro inesperado ocorreu ao iniciar a conversa. Por favor, tente enviar a mensagem novamente');
-            return false;
+            return {
+                isCreated: false,
+                chatID: ''
+            };
         }
     }
 
