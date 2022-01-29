@@ -45,8 +45,7 @@ export class MessageModel
 
         if(hasCreateadChat)
         {
-            const newContactId = uuidv4();
-            const hasAddedNewContact = await this.database.addContact(userEmail, contactEmail, newContactId, uniqueChatId);
+            const hasAddedNewContact = await this.database.addContact(userEmail, contactEmail, uniqueChatId);
             
             return hasAddedNewContact ? uniqueChatId : new Error('An Error has occured creating a new chat');
         }
