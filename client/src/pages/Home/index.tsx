@@ -5,7 +5,7 @@ import {
     Text,
     View
 } from 'react-native';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { NavigationStackScreenProps } from 'react-navigation-stack';
 import { io, Socket } from 'socket.io-client';
 import MessagePreview from '../../components/MessagePreview';
@@ -23,6 +23,7 @@ type Props = NavigationStackScreenProps<RootStackParamList>
 const Home: React.FC<Props> = ({ navigation }) => {
 
     const [ messages, setMessages ] = useState<Preview[]>();
+    const [ userInfos, setUserInfos ] = useState<User>({} as User);
     const [ socket, setSocket ] = useState<Socket>();
 
     useEffect(() => {
@@ -30,7 +31,7 @@ const Home: React.FC<Props> = ({ navigation }) => {
 
         const socket = io(BASE_URL);
         
-        socket.emit(NEW_CHAT);
+        socket.emit(NEW_CHAT, userInfos.email);
 
         setSocket(socket);
 
@@ -50,6 +51,8 @@ const Home: React.FC<Props> = ({ navigation }) => {
 
         if(userInfo)
         {
+            setUserInfos(JSON.parse(userInfo));
+
             const { email } = JSON.parse(userInfo) as User;
             
             try
@@ -81,7 +84,7 @@ const Home: React.FC<Props> = ({ navigation }) => {
     }
 
     return (
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
             {
                 messages
                 ? (
@@ -96,10 +99,10 @@ const Home: React.FC<Props> = ({ navigation }) => {
                     <Image
                         source={require('../../../assets/chat.png')}
                         style={styles.showContactIconImage}
-                    />
+                        />
                 </TouchableOpacity>
             </View>    
-        </ScrollView>
+        </View>
     );
 }
 
