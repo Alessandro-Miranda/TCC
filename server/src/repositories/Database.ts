@@ -34,7 +34,7 @@ export class Database implements IDatabaseRepositorie
     getDoc(docPath: string | string[]): DocumentReference<DocumentData>
     {
         const slashSeparetedDocPath = Array.isArray(docPath) ? docPath.join('/') : docPath;
-
+        
         return doc(firestoreApp, slashSeparetedDocPath);
     }
 
@@ -77,32 +77,21 @@ export class Database implements IDatabaseRepositorie
     {
         const chatRef = this.getDoc([CHATS, uniqueChatId]);
         const chatInfo = {
-            users: {}
+            users: {
+                user1: userEmail,
+                user2: contactEmail
+            }
         }
-
-        Object.defineProperty(chatInfo.users, userEmail, {
-            configurable: true,
-            writable: true,
-            enumerable: true,
-            value: true
-        });
-
-        Object.defineProperty(chatInfo.users, contactEmail, {
-            configurable: true,
-            writable: true,
-            enumerable: true,
-            value: true
-        });
         
-        const response = await this.setDocuments(chatRef, chatInfo);
+        const response = await this.setDocuments(chatRef, chatInfo, true);
 
         return response;
     }
     
-    async addContact(userEmail: string, contactEmail: string, contactId: string, chatId: string): Promise<Boolean>
+    async addContact(userEmail: string, contactEmail: string, chatId: string): Promise<Boolean>
     {
-        const contactInfo = await this.findUserByEmail(contactEmail);
-        const contactRef = this.getDoc([USERS, userEmail, CONTACTS, contactId]);
+        const { password, admin, ...contactInfo } = await this.findUserByEmail(contactEmail);
+        const contactRef = this.getDoc([USERS, userEmail, CONTACTS, contactEmail]);
         const infosToSave = {
             ...contactInfo,
             chatID: chatId
@@ -131,10 +120,10 @@ export class Database implements IDatabaseRepositorie
             const chatID = uuidv4();
             
             // Adiciona os usuários do mesmo setor aos contatos do novo usuário
-            await this.addContact(userInfos.email, contact.email, uuidv4(), chatID);
+            await this.addContact(userInfos.email, contact.email, chatID);
             
             // Adiciona o usuário ao contato dos usuários do setor já existentes
-            await this.addContact(contact.email, userInfos.email, uuidv4(), chatID);
+            await this.addContact(contact.email, userInfos.email, chatID);
         }
         
         return true;    
