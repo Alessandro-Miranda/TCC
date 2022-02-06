@@ -17,4 +17,5 @@ export interface IDatabaseRepositorie
     getMessagePreview(snapshoot: QuerySnapshot<DocumentData>, email: string): Promise<Preview[] | []>;
     addNewUser(userInfos: User): Promise<boolean>;
     updateUser(userEmail: string, newInfos: User): Promise<boolean>;
+    findChat(userEmail: string, contactEmail: string): Promise<{ chatAlreadyExists: boolean, chatID: string }>
 }
