@@ -31,18 +31,21 @@ const Home: React.FC<Props> = ({ navigation }) => {
 
         const socket = io(BASE_URL);
         
-        socket.emit(NEW_CHAT, userInfos.email);
-
         setSocket(socket);
 
         asyncGetMessages();
-
+        
         return () => {
             socket.disconnect();
         }
     }, []);
 
+    useEffect(() => {
+        socket?.emit(NEW_CHAT, userInfos.email);
+    }, [userInfos]);
+
     socket?.on(NEW_CHAT, (data: Preview[]) => {
+        console.log('chegou coisa nova aqui');
         setMessages(data);
     });
 
