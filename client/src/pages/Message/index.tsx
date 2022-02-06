@@ -6,7 +6,7 @@ import { NavigationStackScreenProps } from "react-navigation-stack";
 import { io, Socket } from "socket.io-client";
 import { v4 as uuidv4 } from 'uuid';
 import MessagesText from "../../components/MessagesText";
-import { BASE_URL, NEW_MESSAGE } from "../../constants";
+import { BASE_URL, NEW_CHAT, NEW_MESSAGE } from "../../constants";
 import { api } from "../../services/api";
 import { MessageBody, MessageState } from "../../types/Messages";
 import { RootStackParamList } from "../../types/RootStackParamList";
@@ -113,6 +113,7 @@ const Message: React.FC <Props> = ({ navigation }) => {
             const { data } = await api.post<{ isSent: boolean, message: string }>("/messages/send", messageToSend);
             
             socket?.emit(NEW_MESSAGE, chatID || chatInfos.chatID);
+            socket?.emit(NEW_CHAT, chatInfos.email);
             
             if(!data.isSent)
             {
