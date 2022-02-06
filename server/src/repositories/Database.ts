@@ -151,6 +151,28 @@ export class Database implements IDatabaseRepositorie
         return response;    
     }
 
+    async findChat(userEmail: string, contactEmail: string): Promise<{ chatAlreadyExists: boolean; chatID: string; }>
+    {
+        const chats = await getDocs(this.getCollectionRef(CHATS));
+        let chatID: string = '';
+
+        chats.forEach(chat => {
+            const chatUsers = chat.data() as { users: { user1: string, user2: string } };
+            
+            const users = Object.values(chatUsers.users);
+            
+            if(users.every(user => user === userEmail || user === contactEmail))
+            {
+                chatID = chat.id;
+            }
+        })
+
+        return {
+            chatAlreadyExists: chatID !== '',
+            chatID
+        }
+    }
+
     private async setDocuments(
         documentReference: DocumentReference<DocumentData>,
         data: any,
@@ -159,7 +181,7 @@ export class Database implements IDatabaseRepositorie
     )
     {
         const options = {
-            merge: merge || false,
+            merge: merge ?? false,
             mergeFields
         };
 
@@ -168,7 +190,7 @@ export class Database implements IDatabaseRepositorie
 
     async getMessages(email: string): Promise<Preview[] | []>
     {
-        const querySnapshot = await getDocs(this.getCollectionRef('chats'));
+        const querySnapshot = await getDocs(this.getCollectionRef(CHATS));
 
         const messagePreview = await this.getMessagePreview(querySnapshot, email);
 
@@ -181,8 +203,8 @@ export class Database implements IDatabaseRepositorie
         const chatsInfo: Preview[] = [];
 
         snapshot.forEach(doc => {
-            const users = Object.keys(doc.data().users);
-
+            const users = Object.values<string>(doc.data().users);
+            
             if(users.includes(email))
             {
                 chats.push({
