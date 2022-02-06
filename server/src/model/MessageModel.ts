@@ -40,6 +40,13 @@ export class MessageModel
 
     async createChat(userEmail: string, contactEmail: string)
     {
+        const { chatAlreadyExists, chatID } = await this.database.findChat(userEmail, contactEmail);
+
+        if(chatAlreadyExists)
+        {
+            return chatID;
+        }
+        
         const uniqueChatId = uuidv4();
         const hasCreateadChat = await this.database.createChat(userEmail, contactEmail, uniqueChatId);
 
