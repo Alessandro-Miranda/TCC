@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Alert, Image, NativeSyntheticEvent, TextInput, TextInputChangeEventData, View } from "react-native";
 import { ScrollView, TouchableHighlight } from "react-native-gesture-handler";
 import 'react-native-get-random-values';
 import { NavigationStackScreenProps } from "react-navigation-stack";
-import { io, Socket } from "socket.io-client";
 import { v4 as uuidv4 } from 'uuid';
 import MessagesText from "../../components/MessagesText";
-import { BASE_URL, NEW_CHAT, NEW_MESSAGE } from "../../constants";
+import { NEW_MESSAGE } from "../../constants";
+import { SocketContext } from "../../contexts/socketContext";
 import { api } from "../../services/api";
 import { MessageBody, MessageState } from "../../types/Messages";
 import { RootStackParamList } from "../../types/RootStackParamList";
@@ -22,28 +22,26 @@ const Message: React.FC <Props> = ({ navigation }) => {
     const [ userInfos, setUserInfos ] = useState({} as User);
     const [ allMessages, setAllMessages ] = useState([] as Message[]);
     const [ chatInfos, setChatInfos ] = useState({} as Contact);
-    const [ socket, setSocket ] = useState<Socket>();
+    const { socket } = useContext(SocketContext);
     
     const scrollViewRef = useRef<ScrollView>(null);
     
     useEffect(() => {
         asyncBootstrap();
-        const socket = io(BASE_URL);
-        
-        setSocket(socket);
         
         const contactInfo = navigation.state.params?.contact as Contact;
+        
         setChatInfos({
             ...contactInfo
         });
         
         if(contactInfo.chatID)
         {
-            socket.emit(NEW_MESSAGE, contactInfo.chatID);
+            socket?.emit(NEW_MESSAGE, contactInfo.chatID);
         }
 
         return () => {
-            socket.disconnect();
+            socket?.off(NEW_MESSAGE);
         }
     }, []);
 
@@ -105,15 +103,12 @@ const Message: React.FC <Props> = ({ navigation }) => {
             const lastMessage = messages[messages.length - 1] as Message;
             
             const messageToSend: MessageBody = {
-                chatID: chatID || chatInfos.chatID,
+                chatID: chatID ?? chatInfos.chatID,
                 ...lastMessage,
                 to: chatInfos.email
             };
             
             const { data } = await api.post<{ isSent: boolean, message: string }>("/messages/send", messageToSend);
-            
-            socket?.emit(NEW_MESSAGE, chatID || chatInfos.chatID);
-            socket?.emit(NEW_CHAT, chatInfos.email);
             
             if(!data.isSent)
             {
