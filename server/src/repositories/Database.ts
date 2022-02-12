@@ -76,12 +76,17 @@ export class Database implements IDatabaseRepositorie
     async createChat(userEmail: string, contactEmail: string, uniqueChatId: string): Promise<Boolean>
     {
         const chatRef = this.getDoc([CHATS, uniqueChatId]);
-        const chatInfo = {
-            users: {
-                user1: userEmail,
-                user2: contactEmail
-            }
-        }
+        const chatInfo = { users: {} }
+
+        Object.defineProperty(chatInfo.users, Buffer.from(userEmail).toString('base64'), {
+            enumerable: true,
+            value: true
+        });
+
+        Object.defineProperty(chatInfo.users, Buffer.from(contactEmail).toString('base64'), {
+            enumerable: true,
+            value: true
+        });
         
         const response = await this.setDocuments(chatRef, chatInfo, true);
 
@@ -157,9 +162,9 @@ export class Database implements IDatabaseRepositorie
         let chatID: string = '';
 
         chats.forEach(chat => {
-            const chatUsers = chat.data() as { users: { user1: string, user2: string } };
+            const chatUsers = chat.data() as { users: {} };
             
-            const users = Object.values(chatUsers.users);
+            const users = Object.keys(chatUsers.users);
             
             if(users.every(user => user === userEmail || user === contactEmail))
             {
@@ -203,9 +208,9 @@ export class Database implements IDatabaseRepositorie
         const chatsInfo: Preview[] = [];
 
         snapshot.forEach(doc => {
-            const users = Object.values<string>(doc.data().users);
+            const users = Object.keys(doc.data().users);
             
-            if(users.includes(email))
+            if(users.includes(Buffer.from(email).toString('base64')))
             {
                 chats.push({
                     chatID: doc.id,
