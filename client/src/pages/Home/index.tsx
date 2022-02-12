@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     Alert,
     Image,
@@ -7,9 +7,9 @@ import {
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { NavigationStackScreenProps } from 'react-navigation-stack';
-import { io, Socket } from 'socket.io-client';
 import MessagePreview from '../../components/MessagePreview';
-import { BASE_URL, NEW_CHAT } from '../../constants';
+import { NEW_CHAT } from '../../constants';
+import { SocketContext } from '../../contexts/socketContext';
 import { api } from '../../services/api';
 import { Preview } from '../../types/Messages';
 import { RootStackParamList } from '../../types/RootStackParamList';
@@ -22,30 +22,29 @@ type Props = NavigationStackScreenProps<RootStackParamList>
 
 const Home: React.FC<Props> = ({ navigation }) => {
 
-    const [ messages, setMessages ] = useState<Preview[]>();
+    const [ messages, setMessages ] = useState([] as Preview[]);
     const [ userInfos, setUserInfos ] = useState<User>({} as User);
-    const [ socket, setSocket ] = useState<Socket>();
+    const { socket } = useContext(SocketContext);
 
     useEffect(() => {
         bootstrapAsync();
-
-        const socket = io(BASE_URL);
         
-        setSocket(socket);
-
         asyncGetMessages();
-        
+
         return () => {
-            socket.disconnect();
+            socket?.disconnect();
         }
     }, []);
 
     useEffect(() => {
-        socket?.emit(NEW_CHAT, userInfos.email);
+        
+        if(userInfos.email)
+        {            
+            socket?.emit(NEW_CHAT, userInfos.email);
+        }
     }, [userInfos]);
 
     socket?.on(NEW_CHAT, (data: Preview[]) => {
-        console.log('chegou coisa nova aqui');
         setMessages(data);
     });
 
@@ -89,7 +88,7 @@ const Home: React.FC<Props> = ({ navigation }) => {
     return (
         <View style={styles.container}>
             {
-                messages
+                messages.length
                 ? (
                     <MessagePreview
                         messages={messages}
