@@ -1,4 +1,4 @@
-import { CollectionReference, DocumentData, DocumentReference, QuerySnapshot } from "firebase/firestore";
+import { CollectionReference, DocumentData, DocumentReference, QueryDocumentSnapshot, QuerySnapshot } from "firebase/firestore";
 import { Contacts } from "../types/Contacts";
 import { MessageBody, Preview } from "../types/Message";
 import { User } from "../types/User";
@@ -14,7 +14,7 @@ export interface IDatabaseRepositorie
     addContact(userEmail: string, contactEmail: string, contactId: string, chatId: string): Promise<Boolean>;
     sendMessage(message: MessageBody): Promise<Boolean>;
     getMessages(email: string): Promise<Preview[] | []>;
-    getMessagePreview(snapshoot: QuerySnapshot<DocumentData>, email: string): Promise<Preview[] | []>;
+    getMessagePreview(snapshoot: QuerySnapshot<DocumentData>, email: string, chatUserDoc?: QueryDocumentSnapshot<DocumentData>): Promise<Preview[] | []>;
     addNewUser(userInfos: User): Promise<boolean>;
     updateUser(userEmail: string, newInfos: User): Promise<boolean>;
     findChat(userEmail: string, contactEmail: string): Promise<{ chatAlreadyExists: boolean, chatID: string }>
