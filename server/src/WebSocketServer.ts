@@ -1,5 +1,5 @@
 import { Express } from 'express';
-import { onSnapshot, query, Unsubscribe, where } from 'firebase/firestore';
+import { getDocs, onSnapshot, query, Unsubscribe, where } from 'firebase/firestore';
 import { createServer, Server } from 'http';
 import { Server as SocketIoServer, Socket } from 'socket.io';
 import {
@@ -25,13 +25,15 @@ export class WebSocketServer implements IWebSocketServer
     public server: Server;
     public io: SocketIoServer;
     static newMessageUnsub: Unsubscribe = () => {};
-    static newChatUnsub: Unsubscribe = () => {};
+    static newChatUnsub: Unsubscribe[] = [];
     public messages: MessageBody[] = [];
     
     constructor(server: Express)
     {
         this.server = createServer(server);
-        this.io = new SocketIoServer(this.server);
+        this.io = new SocketIoServer(this.server, {
+            allowUpgrades: false
+        });
         this.listen();
     }
 
@@ -76,9 +78,17 @@ export class WebSocketServer implements IWebSocketServer
         
         const queryToExecute = query(db.getCollectionRef(CHATS), where(`users.${Buffer.from(userEmail).toString('base64')}`, '==', true));
 
-        this.newChatUnsub = onSnapshot(queryToExecute, async snapshoot => {
-            const userChatsInfo = await db.getMessagePreview(snapshoot, userEmail);
-            socket.emit(NEW_CHAT, userChatsInfo);
+        const docs = await getDocs(queryToExecute);
+
+        docs.forEach(doc => {
+            const messagesDoc = db.getDoc(`${doc.ref.path}/mensagens/mensagem`);
+
+            this.newChatUnsub.push(
+                onSnapshot(messagesDoc, async snapshot => {
+                    const userChatsInfo = await db.getMessagePreview(snapshot, userEmail, doc);
+                    socket.emit(NEW_CHAT, userChatsInfo);     
+                })
+            )
         });
     }
     
@@ -86,6 +96,6 @@ export class WebSocketServer implements IWebSocketServer
     {
         console.log('User disconnected. Reason: ', reason);
         this.newMessageUnsub();
-        this.newChatUnsub();
+        this.newChatUnsub.forEach(unsub => unsub());
     }
 }
