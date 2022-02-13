@@ -5,10 +5,12 @@ import {
     doc,
     DocumentData,
     DocumentReference,
+    DocumentSnapshot,
     FieldPath,
     getDoc,
     getDocs,
     query,
+    QueryDocumentSnapshot,
     QuerySnapshot,
     setDoc,
     updateDoc,
@@ -202,22 +204,53 @@ export class Database implements IDatabaseRepositorie
         return messagePreview;
     }
 
-    async getMessagePreview(snapshot: QuerySnapshot<DocumentData>, email: string): Promise<Preview[] | []>
+    private getChatInfoToMessagePreview(
+        snapshotDoc: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>,
+        email: string
+    ): { chatID: string, contactEmail: string }
+    {
+        
+        const chats: { chatID: string, contactEmail: string } = {
+            chatID: '',
+            contactEmail: ''
+        };
+        const users = Object.keys(snapshotDoc.data()?.users);
+        const userEmailInBase64 = Buffer.from(email).toString('base64');
+                
+        if(users.includes(userEmailInBase64))
+        {
+            chats.chatID = snapshotDoc.id;
+            chats.contactEmail = users.filter(user => user !== userEmailInBase64)[0];
+        }
+
+        return chats;
+    }
+
+    async getMessagePreview(
+        snapshot: QuerySnapshot<DocumentData> | DocumentSnapshot<DocumentData>,
+        email: string,
+        chatUserDoc?: QueryDocumentSnapshot<DocumentData>
+    ): Promise<Preview[] | []>
     {
         const chats: { chatID: string, contactEmail: string }[] = [];
         const chatsInfo: Preview[] = [];
 
-        snapshot.forEach(doc => {
-            const users = Object.keys(doc.data().users);
-            
-            if(users.includes(Buffer.from(email).toString('base64')))
+        if(snapshot instanceof QuerySnapshot)
+        {
+            snapshot.forEach(doc => {
+
+                chats.push(this.getChatInfoToMessagePreview(doc, email));
+            });
+        }
+        else
+        {
+            if(chatUserDoc)
             {
-                chats.push({
-                    chatID: doc.id,
-                    contactEmail: users.filter(user => user !== email)[0]
-                });
+                const docRef = this.getDoc(chatUserDoc?.ref.path);
+                const userDoc = await getDoc(docRef);
+                chats.push(this.getChatInfoToMessagePreview(userDoc, email));
             }
-        });
+        }
 
         if(!chats.length)
         {
@@ -226,8 +259,12 @@ export class Database implements IDatabaseRepositorie
         
         for(const chat of chats)
         {
+            const contactEmailInBuffer = Buffer.from(chat.contactEmail, 'base64');
+            const contactEmail = contactEmailInBuffer.toString('utf-8');
+            
             const docRef = this.getDoc([CHATS, chat.chatID, MESSAGES, MESSAGE]);
-            const contactInfos = await this.findUserByEmail(chat.contactEmail);
+            const contactInfos = await this.findUserByEmail(contactEmail);
+            
             const docSnapshoot = await getDoc(docRef);
 
             if(docSnapshoot.exists())
