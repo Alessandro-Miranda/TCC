@@ -6,5 +6,5 @@ export const NEW_CHAT = 'new chat';
 // End of Socket.io events
 
 // Base URL
-export const BASE_URL = 'http://192.168.1.4:4000/';
+export const BASE_URL = 'http://192.168.1.3:4000/';
 // End of base url
