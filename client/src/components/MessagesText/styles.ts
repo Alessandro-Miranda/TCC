@@ -4,7 +4,7 @@ import { colors } from "../../styles";
 export const styles = StyleSheet.create({
     messageWrapper: {
         maxWidth: '80%',
-        minWidth: '24%',
+        minWidth: '35%',
         marginTop: 20,
         marginLeft: 20,
         marginRight: 20,
@@ -55,7 +55,7 @@ export const styles = StyleSheet.create({
     },
     messageContainerDetailSent: {
         right: -10,
-        top: -6.8,
+        top: -6.5,
         borderRightColor: colors.secundary,
         transform: [{ rotate: '-205deg' }]
     },
